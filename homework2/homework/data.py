@@ -3,7 +3,7 @@ from pathlib import Path
 import torch
 from PIL import Image
 
-DATASET_PATH = Path(__file__).parent.parent / "data"
+DATASET_PATH = Path(__file__).parent.parent / "smalldata"
 
 
 class ImageDataset:
