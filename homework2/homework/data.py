@@ -40,7 +40,7 @@ class TokenDataset(torch.utils.data.TensorDataset):
                 f"Tokenized dataset not found at {tensor_path}. Create it following the assignment instructions."
             )
         self.data = torch.load(tensor_path, weights_only=False)
-        print("num of data: ", len(self.data)
+        print("num of data: ", len(self.data))
 
     def __getitem__(self, idx: int) -> torch.Tensor:
         return torch.tensor(self.data[idx], dtype=torch.long)
