@@ -45,5 +45,8 @@ class TokenDataset(torch.utils.data.TensorDataset):
     def __getitem__(self, idx: int) -> torch.Tensor:
         return torch.tensor(self.data[idx], dtype=torch.long)
 
+    def getLength(self) -> int:
+        return len(self.data)
+
     def __len__(self) -> int:
         return len(self.data)
