@@ -50,8 +50,8 @@ class AutoregressiveModel(torch.nn.Module):
         self.channel_projection = torch.nn.Linear(3, 1)
         self.embedding = torch.nn.Embedding(n_tokens, d_latent)
         self.transformer_encoder = torch.nn.TransformerEncoder(
-            torch.nn.TransformerEncoderLayer(d_latent, nhead=2),
-            2
+            torch.nn.TransformerEncoderLayer(d_latent, nhead=1),
+            1
         )
         self.linear = torch.nn.Linear(d_latent, n_tokens)
 
