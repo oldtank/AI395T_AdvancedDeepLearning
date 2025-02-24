@@ -46,10 +46,44 @@ class AutoregressiveModel(torch.nn.Module):
 
     def __init__(self, d_latent: int = 128, n_tokens: int = 2**10):
         super().__init__()
-        raise NotImplementedError()
+        self.d_latent = d_latent
+        self.embedding = torch.nn.Embedding(n_tokens, d_latent)
+        self.transformer_encoder = torch.nn.TransformerEncoder(
+            torch.nn.TransformerEncoderLayer(d_latent, nhead=8),
+            6
+        )
+        self.linear = torch.nn.Linear(d_latent, n_tokens)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
-        raise NotImplementedError()
+        batch_size, height, weight = x.shape
+        sequence_length = height * weight
+
+        # flatten
+        x_flatten = x.view(batch_size, sequence_length)
+
+        x_embedding = self.embedding(x_flatten)
+
+        zeros = torch.zeros(batch_size, 1, self.d_latent, device=x.device)
+        embeddding_shifted = torch.cat([zeros, x_embedding[:, :-1, :]], dim=1) # (batch_size, seq_len, d_latent)
+
+        # Transpose for transformer encoder
+        embedding_shifted_transposed = embeddding_shifted.transpose(0, 1)  # (sequence_length, batch_size, d_latent)
+
+        mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
+        
+        # Transformer encoder
+        output = self.transformer_encoder(embedding_shifted_transposed, mask=mask)  # (seq_len, batch_size, d_latent)
+
+        # Linear layer
+        output = self.linear(output).transpose(0, 1)  # (batch_size, seq_len, n_tokens)
+
+        # Reshape to image dimensions
+        output = output.view(batch_size, height, width, self.n_tokens)
+
+        # Softmax for probabilities
+        output_probs = torch.softmax(output, dim=-1)
+
+        return output_probs, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         raise NotImplementedError()
