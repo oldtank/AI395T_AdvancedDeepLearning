@@ -38,7 +38,6 @@ class BSQ(torch.nn.Module):
     def __init__(self, codebook_bits: int, embedding_dim: int):
         super().__init__()
         self._codebook_bits = codebook_bits
-        self.latent_dim = embedding_dim
         self.projection = torch.nn.Linear(embedding_dim, codebook_bits)
         self.reconstruction = torch.nn.Linear(codebook_bits, embedding_dim)
 
@@ -135,8 +134,8 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
         """
         # reconstructed_image = self.decode_index(self.encode_index(x))
         encoded = self.encode(x)
-        quantized = self.bsq(x)
-        reconstructed_image = self.decode(x)
+        quantized = self.bsq(encoded)
+        reconstructed_image = self.decode(quantized)
         
         encoded_indices = self.encode_index(x)
         cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
