@@ -104,24 +104,24 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             # self.conv1 = torch.nn.Conv2d(3, bottleneck, kernel_size=3, stride=2, padding=1)
             # self.conv2 = torch.nn.Conv2d(bottleneck, latent_dim, kernel_size=patch_size, stride=patch_size)
 
-            self.conv1 = torch.nn.Conv2d(3, latent_dim, kernel_size=patch_size, stride=patch_size)
-            self.conv2 = torch.nn.Conv2d(latent_dim, bottleneck * 2, kernel_size=3, stride=2, padding=1)
-            self.conv3 = torch.nn.Conv2d(bottleneck * 2, bottleneck, kernel_size=3, stride=2, padding=1)
+            # self.conv1 = torch.nn.Conv2d(3, latent_dim, kernel_size=patch_size, stride=patch_size)
+            # self.conv2 = torch.nn.Conv2d(latent_dim, bottleneck * 2, kernel_size=3, stride=2, padding=1)
+            # self.conv3 = torch.nn.Conv2d(bottleneck * 2, bottleneck, kernel_size=3, stride=2, padding=1)
 
-            # self.patchify = PatchifyLinear(patch_size, latent_dim)
+            self.patchify = PatchifyLinear(patch_size, latent_dim)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            # x = self.patchify(x)
+            x = self.patchify(x)
 
-            x = hwc_to_chw(x)
-            # print("encoder input shape:", x.shape)
-            x = F.gelu(self.conv1(x))
-            # print("encoder conv1 shape:", x.shape)
-            x = F.gelu(self.conv2(x))
-            # print("encoder conv2 shape:", x.shape)
-            x = F.gelu(self.conv3(x))
-            # print("encoder conv3 shape:", x.shape)
-            x = chw_to_hwc(x)
+            # x = hwc_to_chw(x)
+            # # print("encoder input shape:", x.shape)
+            # x = F.gelu(self.conv1(x))
+            # # print("encoder conv1 shape:", x.shape)
+            # x = F.gelu(self.conv2(x))
+            # # print("encoder conv2 shape:", x.shape)
+            # x = F.gelu(self.conv3(x))
+            # # print("encoder conv3 shape:", x.shape)
+            # x = chw_to_hwc(x)
             return x
 
     class PatchDecoder(torch.nn.Module):
@@ -130,23 +130,23 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             # self.conv1 = torch.nn.ConvTranspose2d(latent_dim, bottleneck, kernel_size=patch_size, stride=patch_size)
             # self.conv2 = torch.nn.ConvTranspose2d(bottleneck, 3, kernel_size=3, stride=2, padding=1, output_padding=1)
 
-            self.deconv1 = torch.nn.ConvTranspose2d(bottleneck, bottleneck * 2, kernel_size=4, stride=2, padding=(1,2), output_padding=(0,1))
-            self.deconv2 = torch.nn.ConvTranspose2d(bottleneck * 2, latent_dim, kernel_size=4, stride=2, padding=1)
-            self.deconv3 = torch.nn.ConvTranspose2d(latent_dim, 3, kernel_size=(patch_size, patch_size), stride=patch_size)
+            # self.deconv1 = torch.nn.ConvTranspose2d(bottleneck, bottleneck * 2, kernel_size=4, stride=2, padding=(1,2), output_padding=(0,1))
+            # self.deconv2 = torch.nn.ConvTranspose2d(bottleneck * 2, latent_dim, kernel_size=4, stride=2, padding=1)
+            # self.deconv3 = torch.nn.ConvTranspose2d(latent_dim, 3, kernel_size=(patch_size, patch_size), stride=patch_size)
 
-            # self.unpatchify = UnpatchifyLinear(patch_size, latent_dim)
+            self.unpatchify = UnpatchifyLinear(patch_size, latent_dim)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            # x = self.unpatchify(x)
-            x = hwc_to_chw(x)
-            # print("decoder input shape:", x.shape)
-            x = F.gelu(self.deconv1(x))
-            # print("decoder deconv1 shape:", x.shape)
-            x = F.gelu(self.deconv2(x))
-            # print("decoder deconv2 shape:", x.shape)
-            x = F.gelu(self.deconv3(x))
-            # print("decoder deconv3 shape:", x.shape)
-            x = chw_to_hwc(x)
+            x = self.unpatchify(x)
+            # x = hwc_to_chw(x)
+            # # print("decoder input shape:", x.shape)
+            # x = F.gelu(self.deconv1(x))
+            # # print("decoder deconv1 shape:", x.shape)
+            # x = F.gelu(self.deconv2(x))
+            # # print("decoder deconv2 shape:", x.shape)
+            # x = F.gelu(self.deconv3(x))
+            # # print("decoder deconv3 shape:", x.shape)
+            # x = chw_to_hwc(x)
             return x
 
     def __init__(self, patch_size: int = 25, latent_dim: int = 128, bottleneck: int = 128):
