@@ -64,8 +64,8 @@ class BSQ(torch.nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # return self.decode(self.encode(x))
         x = self.encode(x)
-        # x = self._code_to_index(x)
-        # x = self._index_to_code(x)
+        x = self._code_to_index(x)
+        x = self._index_to_code(x)
         x = self.decode(x)
         return x
 
