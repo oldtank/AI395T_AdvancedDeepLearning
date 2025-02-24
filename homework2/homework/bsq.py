@@ -48,7 +48,9 @@ class BSQ(torch.nn.Module):
         - L2 normalization
         - differentiable sign
         """
+        print("x shape: ", x.shape)
         x = self.projection(x)
+        print("after projection: ", x.shape)
         x = F.normalize(x, dim=-1)
         x = diff_sign(x)
         return x
@@ -58,7 +60,7 @@ class BSQ(torch.nn.Module):
         Implement the BSQ decoder:
         - A linear up-projection into embedding_dim should suffice
         """
-        # x = F.normalize(x, dim=-1)
+        x = F.normalize(x, dim=-1)
         return self.reconstruction(x)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
