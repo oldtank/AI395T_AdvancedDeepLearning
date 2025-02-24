@@ -56,7 +56,7 @@ class AutoregressiveModel(torch.nn.Module):
         self.linear = torch.nn.Linear(d_latent, n_tokens)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
-        # print("input shape:", x.shape)
+        print("input shape:", x.shape)
         batch_size, height, weight, channel = x.shape
         sequence_length = height * weight
 
