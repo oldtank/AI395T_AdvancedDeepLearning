@@ -104,11 +104,11 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
     def decode_index(self, x: torch.Tensor) -> torch.Tensor:
         return self.decode(self.bsq.decode_index(x))
 
-    def encode(self, x: torch.Tensor) -> torch.Tensor:
-        return super().encode(x)
+    # def encode(self, x: torch.Tensor) -> torch.Tensor:
+    #     return super().encode(x)
 
-    def decode(self, x: torch.Tensor) -> torch.Tensor:
-        return super().decode(x)
+    # def decode(self, x: torch.Tensor) -> torch.Tensor:
+    #     return super().decode(x)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         """
