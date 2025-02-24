@@ -49,7 +49,7 @@ class BSQ(torch.nn.Module):
         - differentiable sign
         """
         x = self.projection(x)
-        x = F.normalize(x, dim=-1)
+        # x = F.normalize(x, dim=-1)
         x = diff_sign(x)
         return x
 
