@@ -48,9 +48,9 @@ class BSQ(torch.nn.Module):
         - L2 normalization
         - differentiable sign
         """
-        print("x shape: ", x.shape)
+        # print("x shape: ", x.shape)
         x = self.projection(x)
-        print("after projection: ", x.shape)
+        # print("after projection: ", x.shape)
         x = F.normalize(x, dim=-1)
         x = diff_sign(x)
         return x
