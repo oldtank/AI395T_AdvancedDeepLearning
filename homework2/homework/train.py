@@ -104,10 +104,12 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
 
         def train_dataloader(self):
             dataset = TokenDataset("train")
+            print("train size: ", dataset.getLength())
             return torch.utils.data.DataLoader(dataset, batch_size=20, num_workers=4, shuffle=True)
 
         def val_dataloader(self):
             dataset = TokenDataset("valid")
+            print("val size: ", dataset.getLength())
             return torch.utils.data.DataLoader(dataset, batch_size=20, num_workers=4, shuffle=True)
 
     class CheckPointer(L.Callback):
