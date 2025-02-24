@@ -135,9 +135,9 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         def forward(self, x: torch.Tensor) -> torch.Tensor:
             # x = self.unpatchify(x)
             x = hwc_to_chw(x)
-            x = F.gelu(self.conv1(x))
-            x = F.gelu(self.conv2(x))
-            x = F.gelu(self.conv3(x))
+            x = F.gelu(self.deconv1(x))
+            x = F.gelu(self.deconv2(x))
+            x = F.gelu(self.deconv3(x))
             x = chw_to_hwc(x)
             return x
 
