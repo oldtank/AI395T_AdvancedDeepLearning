@@ -1,6 +1,7 @@
 import abc
 
 import torch
+import torch.nn.functional as F
 
 
 def hwc_to_chw(x: torch.Tensor) -> torch.Tensor:
@@ -98,25 +99,48 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
     """
 
     class PatchEncoder(torch.nn.Module):
-        """
-        (Optionally) Use this class to implement an encoder.
-                     It can make later parts of the homework easier (reusable components).
-        """
-
         def __init__(self, patch_size: int, latent_dim: int, bottleneck: int):
             super().__init__()
-            raise NotImplementedError()
+            self.conv1 = torch.nn.Conv2d(3, bottleneck*2, kernel_size=patch_size, stride=patch_size)
+            self.conv2 = torch.nn.Conv2d(bottleneck*2, latent_dim, kernel_size=3, stride=1, padding=1)
+
+            # self.patchify = PatchifyLinear(patch_size, latent_dim)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            raise NotImplementedError()
+            # print(f"input shape {x.shape}")
+            # y = self.patchify(x)
+            # print(f"patrify linear shape {y.shape}")
+
+            x = hwc_to_chw(x)
+            # print(f"after switching {x.shape}")
+            x = F.gelu(self.conv1(x))
+            # print(f"after first convo {x.shape}")
+            x = F.gelu(self.conv2(x))
+            # print(f"after 2nd convo {x.shape}")
+            x = chw_to_hwc(x)
+            # print(f"after switch {x.shape}")
+            return x
 
     class PatchDecoder(torch.nn.Module):
         def __init__(self, patch_size: int, latent_dim: int, bottleneck: int):
             super().__init__()
-            raise NotImplementedError()
+            self.conv1 = torch.nn.ConvTranspose2d(latent_dim, bottleneck*2, kernel_size=3, stride=1, padding=1)
+            self.conv2 = torch.nn.ConvTranspose2d(bottleneck*2, 3, kernel_size=patch_size, stride=patch_size)
+
+            # self.unpatchify = UnpatchifyLinear(patch_size, latent_dim)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            raise NotImplementedError()
+            # print(f"input shape {x.shape}")
+            # y = self.unpatchify(x)
+            # print(f"unpatchify shape {y.shape}")
+            x = hwc_to_chw(x)
+            # print(f"after switch shape {x.shape}")
+            x = F.gelu(self.conv1(x))
+            # print(f"after convo1 shape {x.shape}")
+            x = F.gelu(self.conv2(x))
+            # print(f"after convo2 shape {x.shape}")
+            x = chw_to_hwc(x)
+            return x
 
     def __init__(self, patch_size: int = 25, latent_dim: int = 128, bottleneck: int = 128):
         super().__init__()
@@ -124,8 +148,8 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         self.latent_dim = latent_dim
         self.bottleneck = bottleneck
 
-        self.patchify = PatchifyLinear(patch_size, latent_dim)
-        self.unpatrify = UnpatchifyLinear(patch_size, latent_dim)
+        self.encoder = self.PatchEncoder(patch_size, latent_dim, bottleneck)
+        self.decoder = self.PatchDecoder(patch_size, latent_dim, bottleneck)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         """
@@ -137,7 +161,7 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         return self.decode(self.encode(x)), additional_losses
 
     def encode(self, x: torch.Tensor) -> torch.Tensor:
-        return self.patchify(x)
+        return self.encoder(x)
 
     def decode(self, x: torch.Tensor) -> torch.Tensor:
-        return self.unpatrify(x)
+        return self.decoder(x)
