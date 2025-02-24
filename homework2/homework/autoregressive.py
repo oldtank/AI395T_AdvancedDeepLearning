@@ -47,6 +47,7 @@ class AutoregressiveModel(torch.nn.Module):
     def __init__(self, d_latent: int = 128, n_tokens: int = 2**10):
         super().__init__()
         self.d_latent = d_latent
+        self.channel_projection = nn.Linear(3, 1)
         self.embedding = torch.nn.Embedding(n_tokens, d_latent)
         self.transformer_encoder = torch.nn.TransformerEncoder(
             torch.nn.TransformerEncoderLayer(d_latent, nhead=8),
@@ -56,11 +57,13 @@ class AutoregressiveModel(torch.nn.Module):
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         print("input shape:", x.shape)
-        batch_size, height, weight = x.shape
+        batch_size, height, weight, channel = x.shape
         sequence_length = height * weight
 
+        x_projected = self.channel_projection(x).squeeze(-1).long()
+        
         # flatten
-        x_flatten = x.view(batch_size, sequence_length)
+        x_flatten = x_projected.view(batch_size, sequence_length)
 
         x_embedding = self.embedding(x_flatten)
 
