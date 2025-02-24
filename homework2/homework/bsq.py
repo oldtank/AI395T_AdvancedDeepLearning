@@ -63,7 +63,12 @@ class BSQ(torch.nn.Module):
         return self.reconstruction(x)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.decode(self.encode(x))
+        # return self.decode(self.encode(x))
+        x = self.encode(x)
+        x = self._code_to_index(x)
+        x = self._index_to_code(x)
+        x = self.decode(x)
+        return x
 
     def encode_index(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -126,7 +131,11 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
                 ...
               }
         """
-        reconstructed_image = self.decode_index(self.encode_index(x))
+        # reconstructed_image = self.decode_index(self.encode_index(x))
+        encoded = self.encode(x)
+        quantized = self.bsq(x)
+        reconstructed_image = self.decode(x)
+        
         encoded_indices = self.encode_index(x)
         cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
         codebook_stats = {
