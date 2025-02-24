@@ -25,8 +25,6 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
 
     from .data import ImageDataset, TokenDataset
 
-    print('data load complete')
-
     class PatchTrainer(L.LightningModule):
         def __init__(self, model):
             super().__init__()
