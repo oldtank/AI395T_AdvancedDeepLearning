@@ -132,7 +132,7 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
 
             self.deconv1 = torch.nn.ConvTranspose2d(bottleneck, bottleneck * 2, kernel_size=4, stride=2, padding=1)
             self.deconv2 = torch.nn.ConvTranspose2d(bottleneck * 2, latent_dim, kernel_size=4, stride=2, padding=1)
-            self.deconv3 = torch.nn.ConvTranspose2d(latent_dim, 3, kernel_size=patch_size, stride=patch_size)
+            self.deconv3 = torch.nn.ConvTranspose2d(latent_dim, 3, kernel_size=patch_size+1, stride=patch_size)
 
             # self.unpatchify = UnpatchifyLinear(patch_size, latent_dim)
 
