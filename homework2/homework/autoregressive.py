@@ -91,12 +91,12 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         probs = torch.softmax(output, dim=-1)
 
         # Reshape to image dimensions
-        output = output.permute(1, 0, 2).view(batch_size, height, width, self.n_tokens)
+        probs = probs.permute(1, 0, 2).view(batch_size, height, width, self.n_tokens)
 
         # # Softmax for probabilities
         # output_probs = torch.softmax(output, dim=-1)
 
-        return output_probs, {}
+        return probs, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         raise NotImplementedError()
