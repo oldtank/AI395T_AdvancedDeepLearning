@@ -83,7 +83,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         x_embedding_combined = x_embedding_combined.permute(1, 0, 2)
         
         # Transformer encoder
-        output = self.transformer_encoder(x_embedding, mask=mask)  # (seq_len, batch_size, d_latent)
+        output = self.transformer_encoder(x_embedding_combined, mask=mask)  # (seq_len, batch_size, d_latent)
 
         # Linear layer
         output = self.linear(output)
