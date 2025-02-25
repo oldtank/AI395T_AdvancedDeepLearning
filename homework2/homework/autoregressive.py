@@ -88,11 +88,13 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         # Linear layer
         output = self.linear(output)
 
+        probs = torch.softmax(output, dim=-1)
+
         # Reshape to image dimensions
         output = output.permute(1, 0, 2).view(batch_size, height, width, self.n_tokens)
 
-        # Softmax for probabilities
-        output_probs = torch.softmax(output, dim=-1)
+        # # Softmax for probabilities
+        # output_probs = torch.softmax(output, dim=-1)
 
         return output_probs, {}
 
