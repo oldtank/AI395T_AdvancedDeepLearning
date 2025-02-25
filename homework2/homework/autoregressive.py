@@ -107,22 +107,15 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         self.eval()  # Set the model to evaluation mode
         with torch.no_grad():
             generated_images = torch.zeros((B, h, w), dtype=torch.long, device=device)
-            for i in range(h):
-                for j in range(w):
-                    if i == 0 and j == 0:
-                        # For the first pixel, use a zero tensor as input.
-                        input_tensor = torch.zeros((B, h, w, self.num_channels), device=device)
-                    else:
-                        # For subsequent pixels, use the generated image up to the current position as input.
-                        input_tensor = torch.zeros((B, h, w, self.num_channels), device=device)
-                        input_tensor[:, :i, :] = generated_images[:, :i, :].unsqueeze(-1).repeat(1, 1, 1, self.num_channels)
-                        input_tensor[:, i, :j] = generated_images[:, i, :j].unsqueeze(-1).repeat(1, 1, 1, self.num_channels)
-
-                    # Get the probability distribution over the next token
-                    probs, _ = self.forward(input_tensor) # (B, h, w, n_tokens)
-                    next_token = torch.argmax(probs[:, i, j, :], dim=-1) # (B)
-
-                    # Store the generated token
-                    generated_images[:, i, j] = next_token
-        self.train() #set back to train mode
+            seq_len = h * w
+            x_flat = x.view(B, seq_len)
+            generated_tokens = torch.zeros(B, seq_len, dtype=torch.long, device=device)
+            for i in range(seq_len):
+                logits = self.forward(x)
+                probs = logits[:, i, :] 
+                next_token = torch.argmax(probs, dim=-1)
+                generated_tokens[:, i] = next_token
+                x_flat[:, i] = next_token
+                x = x_flat.view(B, h, w)
+        generated_image = generated_tokens.view(B, h, w)
         return generated_images
