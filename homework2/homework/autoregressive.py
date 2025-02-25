@@ -104,4 +104,25 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         return output_probs, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
-        raise NotImplementedError()
+        self.eval()  # Set the model to evaluation mode
+        with torch.no_grad():
+            generated_images = torch.zeros((B, h, w), dtype=torch.long, device=device)
+            for i in range(h):
+                for j in range(w):
+                    if i == 0 and j == 0:
+                        # For the first pixel, use a zero tensor as input.
+                        input_tensor = torch.zeros((B, h, w, self.num_channels), device=device)
+                    else:
+                        # For subsequent pixels, use the generated image up to the current position as input.
+                        input_tensor = torch.zeros((B, h, w, self.num_channels), device=device)
+                        input_tensor[:, :i, :] = generated_images[:, :i, :].unsqueeze(-1).repeat(1, 1, 1, self.num_channels)
+                        input_tensor[:, i, :j] = generated_images[:, i, :j].unsqueeze(-1).repeat(1, 1, 1, self.num_channels)
+
+                    # Get the probability distribution over the next token
+                    probs, _ = self.forward(input_tensor) # (B, h, w, n_tokens)
+                    next_token = torch.argmax(probs[:, i, j, :], dim=-1) # (B)
+
+                    # Store the generated token
+                    generated_images[:, i, j] = next_token
+        self.train() #set back to train mode
+        return generated_images
