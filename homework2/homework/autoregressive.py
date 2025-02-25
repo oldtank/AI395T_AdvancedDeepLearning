@@ -112,7 +112,6 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         with torch.no_grad():
             seq_len = h * w
             x_flat = x.view(B, seq_len)
-            generated_tokens = torch.zeros(B, seq_len, dtype=torch.long, device=device)
             for i in range(seq_len):
                 logits = self.forward(x)
                 probs = logits[:, i, :] 
