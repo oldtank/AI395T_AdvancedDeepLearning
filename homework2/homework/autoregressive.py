@@ -50,8 +50,8 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         self.n_tokens = n_tokens
         self.embedding = torch.nn.Embedding(n_tokens, d_latent)
         self.transformer_encoder = torch.nn.TransformerEncoder(
-            torch.nn.TransformerEncoderLayer(d_latent, nhead=8),
-            6
+            torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8, dim_feedforward=4 * d_latent, activation='relu'),
+            num_layers=6
         )
         self.linear = torch.nn.Linear(d_latent, n_tokens)
 
@@ -62,24 +62,25 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         # flatten
         x_flatten = x.view(batch_size, sequence_length)
 
-        x_embedding = self.embedding(x_flatten)
+        # Shift input implicitly by one position
+        x_shifted = torch.zeros_like(x_flatten)
+        x_shifted[:, 1:] = x_flatten[:, :-1]
 
-        zeros = torch.zeros(batch_size, 1, self.d_latent, device=x.device)
-        embeddding_shifted = torch.cat([zeros, x_embedding[:, :-1, :]], dim=1) # (batch_size, seq_len, d_latent)
-
-        # Transpose for transformer encoder
-        embedding_shifted_transposed = embeddding_shifted.transpose(0, 1)  # (sequence_length, batch_size, d_latent)
+        x_embedding = self.embedding(x_shifted)
 
         mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
+
+        # Prepare input for the transformer: (seq_len, B, d_latent)
+        x_embedding = x_embedding.permute(1, 0, 2)
         
         # Transformer encoder
-        output = self.transformer_encoder(embedding_shifted_transposed, mask=mask)  # (seq_len, batch_size, d_latent)
+        output = self.transformer_encoder(x_embedding, mask=mask)  # (seq_len, batch_size, d_latent)
 
         # Linear layer
-        output = self.linear(output).transpose(0, 1)  # (batch_size, seq_len, n_tokens)
+        output = self.linear(output)
 
         # Reshape to image dimensions
-        output = output.view(batch_size, height, width, self.n_tokens)
+        output = output.permute(1, 0, 2).view(batch_size, height, width, self.n_tokens)
 
         # Softmax for probabilities
         output_probs = torch.softmax(output, dim=-1)
