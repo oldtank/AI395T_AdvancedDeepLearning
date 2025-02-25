@@ -65,11 +65,12 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         # flatten
         x_flatten = x.view(batch_size, sequence_length)
 
-        # Shift input implicitly by one position
-        x_shifted = torch.zeros_like(x_flatten)
-        x_shifted[:, 1:] = x_flatten[:, :-1]
+        # token embedding
+        x_embedding = self.embedding(x_flatten)
 
-        x_embedding = self.embedding(x_shifted)
+        # shift
+        shifted_emb = torch.zeros_like(x_embedding)
+        shifted_emb[:, 1:] = x_embedding[:, :-1]
 
         # Positional embedding
         positions = torch.arange(sequence_length, device=x.device).unsqueeze(0).expand(batch_size, sequence_length)
@@ -77,7 +78,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
 
         mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
 
-        x_embedding_combined = x_embedding + pos_emb
+        x_embedding_combined = shifted_emb + pos_emb
 
         # Prepare input for the transformer: (seq_len, B, d_latent)
         x_embedding_combined = x_embedding_combined.permute(1, 0, 2)
