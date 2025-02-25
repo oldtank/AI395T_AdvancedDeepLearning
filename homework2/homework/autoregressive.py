@@ -107,17 +107,19 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         seq_len = h * w
         # Start with an empty image (e.g., all zeros or a special start token)
         x = torch.zeros(B, h, w, dtype=torch.long, device=device)
-        generated_tokens = torch.zeros(B, seq_len, dtype=torch.long, device=device)
+        generated_tokens = torch.zeros(B, h, w, dtype=torch.long, device=device)
         
         self.eval()  # Set the model to evaluation mode
         with torch.no_grad():
-            x_flat = x.view(B, seq_len)
-            for i in range(seq_len):
+            for i in range(h*x):
+                row = i // w  # Compute row index
+                col = i % w   # Compute column index
+                
                 logits, _ = self.forward(x)
-                probs = logits[:, i, :] 
+                probs = logits[:, row, col, :]
+                
                 next_token = torch.argmax(probs, dim=-1)
-                generated_tokens[:, i] = next_token
-                x_flat[:, i] = next_token
-                x = x_flat.view(B, h, w)
-        generated_image = generated_tokens.view(B, h, w)
-        return generated_images
+                generated_tokens[:, row, col] = next_token
+
+                x[:, row, col] = next_token
+        return generated_token
