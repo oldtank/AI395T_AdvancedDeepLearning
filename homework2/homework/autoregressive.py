@@ -104,13 +104,13 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         return output_probs, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
+        seq_len = h * w
         # Start with an empty image (e.g., all zeros or a special start token)
         x = torch.zeros(B, h, w, dtype=torch.long, device=device)
         generated_tokens = torch.zeros(B, seq_len, dtype=torch.long, device=device)
         
         self.eval()  # Set the model to evaluation mode
         with torch.no_grad():
-            seq_len = h * w
             x_flat = x.view(B, seq_len)
             for i in range(seq_len):
                 logits = self.forward(x)
