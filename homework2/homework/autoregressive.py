@@ -47,6 +47,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
     def __init__(self, d_latent: int = 128, n_tokens: int = 2**10):
         super().__init__()
         self.d_latent = d_latent
+        self.n_tokens = n_tokens
         self.embedding = torch.nn.Embedding(n_tokens, d_latent)
         self.transformer_encoder = torch.nn.TransformerEncoder(
             torch.nn.TransformerEncoderLayer(d_latent, nhead=2),
