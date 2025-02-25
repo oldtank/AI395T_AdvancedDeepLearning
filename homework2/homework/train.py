@@ -89,8 +89,6 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
         def validation_step(self, x, batch_idx):
             with torch.no_grad():
                 x_hat, additional_losses = self.model(x)
-                print("x shape: ", x.shape)
-                print("x^hat shape: ", x_hat.shape)
                 loss = (
                     torch.nn.functional.cross_entropy(x_hat.view(-1, x_hat.shape[-1]), x.view(-1), reduction="sum")
                     / math.log(2)
