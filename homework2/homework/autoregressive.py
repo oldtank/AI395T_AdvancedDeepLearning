@@ -1,6 +1,7 @@
 import abc
 
 import torch
+import torch.nn.functional as F
 
 
 class Autoregressive(abc.ABC):
