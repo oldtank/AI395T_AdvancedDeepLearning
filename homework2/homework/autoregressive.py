@@ -50,10 +50,10 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         self.n_tokens = n_tokens
         self.embedding = torch.nn.Embedding(n_tokens, d_latent)
         # Positional embedding
-        self.positional_embedding = torch.nn.Embedding(1024, d_latent)  # Assuming max seq_len = 1024
+        # self.positional_embedding = torch.nn.Embedding(1024, d_latent)  # Assuming max seq_len = 1024
 
         self.transformer_encoder = torch.nn.TransformerEncoder(
-            torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8, dim_feedforward=4 * d_latent, activation='relu'),
+            torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8, dim_feedforward=4 * d_latent, activation='relu', batch_first=True),
             num_layers=6
         )
         self.linear = torch.nn.Linear(d_latent, n_tokens)
@@ -65,43 +65,26 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         # flatten
         x_flatten = x.view(batch_size, sequence_length)
 
-        # token embedding
-        x_embedding = self.embedding(x_flatten)
-
         # shift
-        shifted_emb = torch.zeros_like(x_embedding)
-        shifted_emb[:, 1:] = x_embedding[:, :-1]
+        x_shifted = x_flatten[:, :-1]  # All tokens except the last one
+        padding = torch.zeros((batch_size, 1), dtype=x.dtype, device=x.device)
+        x_padded = torch.cat([padding, x_shifted], dim=1)
 
-        # Positional embedding
-        positions = torch.arange(sequence_length, device=x.device).unsqueeze(0).expand(batch_size, sequence_length)
-        pos_emb = self.positional_embedding(positions)
+        # token embedding
+        x_embedding = self.embedding(x_padded)
 
         mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
-
-        x_embedding_combined = shifted_emb + pos_emb
-
-        # Prepare input for the transformer: (seq_len, B, d_latent)
-        x_embedding_combined = x_embedding_combined.permute(1, 0, 2)
         
         # Transformer encoder
-        output = self.transformer_encoder(x_embedding_combined, mask=mask)  # (seq_len, batch_size, d_latent)
+        transformer_output = self.transformer_encoder(x_embedding, mask=mask)  # (seq_len, batch_size, d_latent)
 
         # Linear layer
-        output = self.linear(output)
-
-        # print("before softmax: ", output.shape)
-        # probs = torch.softmax(output, dim=-1)
-        # print("after softmax: ", probs.shape)
-
-        # Reshape to image dimensions
-        # probs = probs.permute(1, 0, 2).view(batch_size, height, width, self.n_tokens)
-        # print("after reshape: ", probs.shape)
+        logits = self.linear(transformer_output)
         
         # # Softmax for probabilities
-        output = output.transpose(0, 1).view(batch_size, height, width, self.n_tokens)
-        output_probs = torch.softmax(output, dim=-1)
+        probabilities = F.softmax(logits, dim=-1).view(batch_size, height, width, self.n_tokens)
 
-        return output_probs, {}
+        return probabilities, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         seq_len = h * w
