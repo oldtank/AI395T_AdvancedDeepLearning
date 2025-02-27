@@ -137,6 +137,8 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
         # reconstructed_image = self.decode_index(self.encode_index(x))
         # x = self.encode(x)
         encoded_indices = self.encode_index(x)
+        print("bottleneck size: ", encoded_indices.shape[1] * encoded_indices.shape[2])
+        
         cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
         reconstructed = self.decode_index(encoded_indices)
         cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
