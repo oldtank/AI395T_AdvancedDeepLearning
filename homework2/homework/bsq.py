@@ -134,7 +134,7 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
         """
         # reconstructed_image = self.decode_index(self.encode_index(x))
         encoded = self.encode(x)
-        quantized = self.bsq(encoded)
+        # quantized = self.bsq(encoded)
         reconstructed_image = self.decode(quantized)
         
         encoded_indices = self.encode_index(x)
