@@ -137,14 +137,14 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
         # quantized = self.bsq(encoded)
         reconstructed_image = self.decode(x)
         
-        encoded_indices = self.encode_index(x)
+        # encoded_indices = self.encode_index(x)
         # print("encoded shape: ", encoded_indices.shape)
-        cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
-        codebook_stats = {
-            "cb0": (cnt == 0).float().mean().detach(),
-            "cb2": (cnt <= 2).float().mean().detach(),
-            "cb5": (cnt <= 5).float().mean().detach(),
-            "cb10": (cnt <= 10).float().mean().detach(),
-        }
+        # cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
+        # codebook_stats = {
+        #     "cb0": (cnt == 0).float().mean().detach(),
+        #     "cb2": (cnt <= 2).float().mean().detach(),
+        #     "cb5": (cnt <= 5).float().mean().detach(),
+        #     "cb10": (cnt <= 10).float().mean().detach(),
+        # }
 
-        return reconstructed_image, codebook_stats
+        return reconstructed_image, {}
