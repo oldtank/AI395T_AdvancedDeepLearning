@@ -149,7 +149,7 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             # x = chw_to_hwc(x)
             return x
 
-    def __init__(self, patch_size: int = 25, latent_dim: int = 128, bottleneck: int = 128):
+    def __init__(self, patch_size: int = 5, latent_dim: int = 128, bottleneck: int = 128):
         super().__init__()
         self.patch_size = patch_size
         self.latent_dim = latent_dim
