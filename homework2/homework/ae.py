@@ -153,7 +153,6 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         """
         additional_losses = {}
         x = self.encode(x)
-        print("encoded shape", x.shape)
         x = self.decode(x)
         return x, additional_losses
 
