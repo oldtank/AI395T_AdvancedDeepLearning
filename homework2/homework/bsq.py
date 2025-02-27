@@ -101,7 +101,7 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
           Changing the patch-size of codebook-size will complicate later parts of the assignment.
     """
 
-    def __init__(self, patch_size: int = 5, latent_dim: int = 128, codebook_bits: int = 12):
+    def __init__(self, patch_size: int = 5, latent_dim: int = 128, codebook_bits: int = 15):
         super().__init__(patch_size=patch_size, latent_dim=latent_dim, bottleneck=128)
         self.codebook_bits = codebook_bits
         self.bsq = BSQ(codebook_bits, latent_dim)
