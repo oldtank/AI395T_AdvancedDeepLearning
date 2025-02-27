@@ -147,4 +147,4 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
             "cb10": (cnt <= 10).float().mean().detach(),
         }
 
-        return reconstructed_image, codebook_stats
+        return reconstructed, codebook_stats
