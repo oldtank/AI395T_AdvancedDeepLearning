@@ -133,12 +133,12 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
               }
         """
         # reconstructed_image = self.decode_index(self.encode_index(x))
-        encoded = self.encode(x)
+        x = self.encode(x)
         # quantized = self.bsq(encoded)
-        reconstructed_image = self.decode(quantized)
+        reconstructed_image = self.decode(x)
         
         encoded_indices = self.encode_index(x)
-        print("encoded shape: ", encoded_indices.shape)
+        # print("encoded shape: ", encoded_indices.shape)
         cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
         codebook_stats = {
             "cb0": (cnt == 0).float().mean().detach(),
