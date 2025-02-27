@@ -111,11 +111,11 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             # x = self.patchify(x)
 
             x = hwc_to_chw(x)
-            print("encoder input shape:", x.shape)
+            # print("encoder input shape:", x.shape)
             x = F.gelu(self.conv1(x))
-            print("encoder conv1 shape:", x.shape)
+            # print("encoder conv1 shape:", x.shape)
             x = self.conv2(x)
-            print("encoder conv3 shape:", x.shape)
+            # print("encoder conv3 shape:", x.shape)
             x = chw_to_hwc(x)
             return x
 
