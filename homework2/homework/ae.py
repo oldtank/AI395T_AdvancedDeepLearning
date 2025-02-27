@@ -101,7 +101,7 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
     class PatchEncoder(torch.nn.Module):
         def __init__(self, patch_size: int, latent_dim: int, bottleneck: int):
             super().__init__()
-            self.conv1 = torch.nn.Conv2d(3, latent_dim, kernel_size=patch_size, stride=patch_size, bias=False)
+            self.conv1 = torch.nn.Conv2d(3, latent_dim, kernel_size=patch_size, stride=patch_size, bias=False, padding=1)
             self.conv2 = torch.nn.Conv2d(latent_dim, bottleneck, kernel_size=5, stride=1, padding=2)
             # self.conv3 = torch.nn.Conv2d(bottleneck, bottleneck, kernel_size=3, stride=1, padding=1)
 
@@ -111,11 +111,11 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             # x = self.patchify(x)
 
             x = hwc_to_chw(x)
-            # # print("encoder input shape:", x.shape)
+            # print("encoder input shape:", x.shape)
             x = F.gelu(self.conv1(x))
-            # # print("encoder conv1 shape:", x.shape)
+            # print("encoder conv1 shape:", x.shape)
             x = self.conv2(x)
-            # # print("encoder conv3 shape:", x.shape)
+            # print("encoder conv3 shape:", x.shape)
             x = chw_to_hwc(x)
             return x
 
