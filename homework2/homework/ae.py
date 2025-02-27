@@ -152,7 +152,10 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         You can return an empty dictionary if you don't have any additional terms.
         """
         additional_losses = {}
-        return self.decode(self.encode(x)), additional_losses
+        x = self.encode(x)
+        print(x.shape())
+        x = self.decode(x)
+        return x, additional_losses
 
     def encode(self, x: torch.Tensor) -> torch.Tensor:
         return self.encoder(x)
