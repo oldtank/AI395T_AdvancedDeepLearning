@@ -115,7 +115,7 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             x = F.gelu(self.conv1(x))
             # # print("encoder conv1 shape:", x.shape)
             x = F.gelu(self.conv2(x))
-            x = F.gelu(self.conv3(x))
+            x = self.conv3(x)
             # # print("encoder conv3 shape:", x.shape)
             x = chw_to_hwc(x)
             return x
@@ -136,7 +136,7 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             x = F.gelu(self.deconv1(x))
             # # print("decoder deconv1 shape:", x.shape)
             x = F.gelu(self.deconv2(x))
-            x = F.gelu(self.deconv3(x))
+            x = self.deconv3(x)
             x = chw_to_hwc(x)
             return x
 
