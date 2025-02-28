@@ -49,7 +49,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         super().__init__()
         self.d_latent = d_latent
         self.n_tokens = n_tokens
-        self.embedding = torch.nn.Embedding(vocab_size=n_tokens, embedding_dim=d_latent)
+        self.embedding = torch.nn.Embedding(num_embeddings=n_tokens, embedding_dim=d_latent)
         # Positional embedding
         # self.positional_embedding = torch.nn.Embedding(1024, d_latent)  # Assuming max seq_len = 1024
 
