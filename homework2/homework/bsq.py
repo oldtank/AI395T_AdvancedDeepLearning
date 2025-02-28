@@ -5,6 +5,14 @@ import torch
 from .ae import PatchAutoEncoder
 import torch.nn.functional as F
 
+def load() -> torch.nn.Module:
+    from pathlib import Path
+
+    model_name = "BSQPatchAutoEncoder"
+    model_path = Path(__file__).parent / f"{model_name}.pth"
+    print(f"Loading {model_name} from {model_path}")
+    return torch.load(model_path, weights_only=False)
+
 def diff_sign(x: torch.Tensor) -> torch.Tensor:
     """
     A differentiable sign function using the straight-through estimator.
