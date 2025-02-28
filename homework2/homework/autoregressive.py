@@ -89,9 +89,11 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         print("logits shape: ", logits.shape)
         
         # # Softmax for probabilities
-        probabilities = F.softmax(self.relu(logits), dim=-1).view(batch_size, height, width, self.n_tokens)
+        probabilities = F.softmax(self.relu(logits), dim=-1)
+        print("probs shape: ", probabilities.shape)
+        probabilities_reshaped = probablities.view(batch_size, height, width, self.n_tokens)
 
-        return probabilities, {}
+        return probabilities_reshaped, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         seq_len = h * w
