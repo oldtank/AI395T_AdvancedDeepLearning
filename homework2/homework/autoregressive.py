@@ -114,4 +114,4 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
                 generated_tokens[:, row, col] = next_token
 
                 x[:, row, col] = next_token
-        return generated_token
+        return generated_tokens
