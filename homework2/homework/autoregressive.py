@@ -62,7 +62,6 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         self.relu = torch.nn.ReLU()
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
-        print(x)
         batch_size, height, width = x.shape
         sequence_length = height * width
         
@@ -93,6 +92,8 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         probabilities = F.softmax(self.relu(logits), dim=-1)
         # print("probs shape: ", probabilities.shape)
         probabilities_reshaped = probabilities.view(batch_size, height, width, self.n_tokens)
+
+        print(probabilities_reshaped)
 
         return probabilities_reshaped, {}
 
