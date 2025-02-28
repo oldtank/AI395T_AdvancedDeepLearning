@@ -65,8 +65,8 @@ class BSQ(torch.nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # return self.decode(self.encode(x))
         x = self.encode(x)
-        x = self._code_to_index(x)
-        x = self._index_to_code(x)
+        # x = self._code_to_index(x)
+        # x = self._index_to_code(x)
         x = self.decode(x)
         return x
 
@@ -106,10 +106,10 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
         self.bsq = BSQ(codebook_bits, latent_dim)
 
     def encode_index(self, x: torch.Tensor) -> torch.Tensor:
-        return self.bsq.encode(self.encode(x))
+        return self.bsq.encode_index(self.encode(x))
 
     def decode_index(self, x: torch.Tensor) -> torch.Tensor:
-        return self.decode(self.bsq.decode(x))
+        return self.decode_index(self.bsq.decode(x))
 
     # def encode(self, x: torch.Tensor) -> torch.Tensor:
     #     return super().encode(x)
@@ -135,10 +135,9 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
         """
         # reconstructed_image = self.decode_index(self.encode_index(x))
         # x = self.encode(x)
+        reconstructed = self.decode(self.bsq(self.encode(x)))
+
         encoded_indices = self.encode_index(x)
-        
-        cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
-        reconstructed = self.decode_index(encoded_indices)
         cnt = torch.bincount(encoded_indices.flatten(), minlength=2 ** self.codebook_bits)
         codebook_stats = {
             "cb0": (cnt == 0).float().mean().detach(),
