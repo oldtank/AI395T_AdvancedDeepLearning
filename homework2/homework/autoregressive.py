@@ -110,7 +110,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
                 logits, _ = self.forward(x)
                 probs = logits[:, row, col, :]
                 # print(f"row {row} column {col} probs {probs}")
-                
+                print(probs)
                 next_token = torch.argmax(probs, dim=-1)
                 print(next_token)
                 generated_tokens[:, row, col] = next_token
