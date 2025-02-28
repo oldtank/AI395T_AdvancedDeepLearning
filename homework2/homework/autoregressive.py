@@ -56,7 +56,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         self.transformer_layer = torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8, dim_feedforward=4 * d_latent, activation='relu', batch_first=True)
         self.transformer_encoder = torch.nn.TransformerEncoder(
             encoder_layer = self.transformer_layer,
-            num_layers=6
+            num_layers=2
         )
         self.linear = torch.nn.Linear(d_latent, n_tokens)
         self.relu = torch.nn.ReLU()
