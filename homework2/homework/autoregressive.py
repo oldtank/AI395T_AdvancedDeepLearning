@@ -97,8 +97,6 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         seq_len = h * w
-        # Start with an empty image (e.g., all zeros or a special start token)
-        x = torch.randint(0, 1024, (B, h, w), dtype=torch.long, device=device)
         generated_tokens = torch.zeros(B, h, w, dtype=torch.long, device=device)
         
         self.eval()  # Set the model to evaluation mode
@@ -107,13 +105,11 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
                 row = i // w  # Compute row index
                 col = i % w   # Compute column index
                 
-                logits, _ = self.forward(x)
-                probs = logits[:, row, col, :]
+                logits, _ = self.forward(generated_tokens)
+                probs = F.softmax(logits[:, row, col, :], dim=-1)
                 # print(f"row {row} column {col} probs {probs}")
-                print(probs[0, 888])
+                # print(probs[0, 888])
                 next_token = torch.argmax(probs, dim=-1)
-                print(next_token)
+                # print(next_token)
                 generated_tokens[:, row, col] = next_token
-
-                x[:, row, col] = next_token
         return generated_tokens
