@@ -58,6 +58,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
             num_layers=6
         )
         self.linear = torch.nn.Linear(d_latent, n_tokens)
+        self.relu = torch.nn.ReLU()
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         batch_size, height, width = x.shape
@@ -83,7 +84,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         logits = self.linear(transformer_output)
         
         # # Softmax for probabilities
-        probabilities = F.softmax(logits, dim=-1).view(batch_size, height, width, self.n_tokens)
+        probabilities = F.softmax(self.relu(logits), dim=-1).view(batch_size, height, width, self.n_tokens)
 
         return probabilities, {}
 
