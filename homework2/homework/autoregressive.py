@@ -60,6 +60,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         )
         self.linear = torch.nn.Linear(d_latent, n_tokens)
         self.relu = torch.nn.ReLU()
+        self.mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         batch_size, height, width = x.shape
@@ -76,10 +77,10 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         x_embedding = self.embedding(x_padded)
         # print("embedding shape: ", x_embedding.shape)
 
-        mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
+        # mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
         
         # Transformer encoder
-        transformer_output = self.transformer_encoder(x_embedding, mask=mask)  # (seq_len, batch_size, d_latent)
+        transformer_output = self.transformer_encoder(x_embedding, mask=self.mask.to(x.device))  # (seq_len, batch_size, d_latent)
 
         # print("transformer output shape: ", transformer_output.shape)
         # Linear layer
