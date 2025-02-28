@@ -106,10 +106,10 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
         self.bsq = BSQ(codebook_bits, latent_dim)
 
     def encode_index(self, x: torch.Tensor) -> torch.Tensor:
-        return self.bsq.encode_index(self.encode(x))
+        return self.bsq.encode(self.encode(x))
 
     def decode_index(self, x: torch.Tensor) -> torch.Tensor:
-        return self.decode(self.bsq.decode_index(x))
+        return self.decode(self.bsq.decode(x))
 
     # def encode(self, x: torch.Tensor) -> torch.Tensor:
     #     return super().encode(x)
