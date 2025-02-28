@@ -53,8 +53,9 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         # Positional embedding
         # self.positional_embedding = torch.nn.Embedding(1024, d_latent)  # Assuming max seq_len = 1024
 
+        self.transformer_layer = torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8, dim_feedforward=4 * d_latent, activation='relu', batch_first=True)
         self.transformer_encoder = torch.nn.TransformerEncoder(
-            torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8, dim_feedforward=4 * d_latent, activation='relu', batch_first=True),
+            encoder_layer = self.transformer_layer,
             num_layers=6
         )
         self.linear = torch.nn.Linear(d_latent, n_tokens)
