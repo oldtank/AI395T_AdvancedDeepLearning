@@ -98,7 +98,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         seq_len = h * w
         # Start with an empty image (e.g., all zeros or a special start token)
-        x = torch.zeros(B, h, w, dtype=torch.long, device=device)
+        x = torch.randint(0, 1024, (B, h, w), dtype=torch.long, device=device)
         generated_tokens = torch.zeros(B, h, w, dtype=torch.long, device=device)
         
         self.eval()  # Set the model to evaluation mode
