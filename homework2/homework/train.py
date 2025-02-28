@@ -100,16 +100,14 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
             return loss
 
         def configure_optimizers(self):
-            return torch.optim.AdamW(self.parameters(), lr=1e-4)
+            return torch.optim.AdamW(self.parameters(), lr=1e-3)
 
         def train_dataloader(self):
             dataset = TokenDataset("train")
-            print("train size: ", dataset.getLength())
             return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=4, shuffle=True)
 
         def val_dataloader(self):
             dataset = TokenDataset("valid")
-            print("val size: ", dataset.getLength())
             return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=4, shuffle=True)
 
     class CheckPointer(L.Callback):
@@ -117,6 +115,7 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
             fn = Path(f"checkpoints/{timestamp}_{model_name}.pth")
             fn.parent.mkdir(exist_ok=True, parents=True)
             torch.save(model, fn)
+            torch.save(model, Path(__file__).parent / f"{model_name}.pth")
 
     # Load or create the model
     if Path(model_name_or_path).exists():
