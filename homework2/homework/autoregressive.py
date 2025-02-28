@@ -62,6 +62,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         self.relu = torch.nn.ReLU()
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
+        print(x)
         batch_size, height, width = x.shape
         sequence_length = height * width
         
@@ -74,23 +75,23 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         x_padded = torch.cat([padding, x_shifted], dim=1)
 
         # token embedding
-        print("before embedding shape: ", x_padded.shape)
+        # print("before embedding shape: ", x_padded.shape)
         x_embedding = self.embedding(x_padded)
-        print("embedding shape: ", x_embedding.shape)
+        # print("embedding shape: ", x_embedding.shape)
 
         mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
         
         # Transformer encoder
         transformer_output = self.transformer_encoder(x_embedding, mask=mask)  # (seq_len, batch_size, d_latent)
 
-        print("transformer output shape: ", transformer_output.shape)
+        # print("transformer output shape: ", transformer_output.shape)
         # Linear layer
         logits = self.linear(transformer_output)
-        print("logits shape: ", logits.shape)
+        # print("logits shape: ", logits.shape)
         
         # # Softmax for probabilities
         probabilities = F.softmax(self.relu(logits), dim=-1)
-        print("probs shape: ", probabilities.shape)
+        # print("probs shape: ", probabilities.shape)
         probabilities_reshaped = probabilities.view(batch_size, height, width, self.n_tokens)
 
         return probabilities_reshaped, {}
