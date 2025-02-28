@@ -103,7 +103,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         
         self.eval()  # Set the model to evaluation mode
         with torch.no_grad():
-            for i in range(h*x):
+            for i in range(h*w):
                 row = i // w  # Compute row index
                 col = i % w   # Compute column index
                 
