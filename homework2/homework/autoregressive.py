@@ -67,12 +67,12 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         
         # flatten
         x_flatten = x.view(batch_size, sequence_length)
-
+        print("before shift, ", x_flatten)
         # shift
         x_shifted = x_flatten[:, :-1]  # All tokens except the last one
         padding = torch.zeros((batch_size, 1), dtype=x.dtype, device=x.device)
         x_padded = torch.cat([padding, x_shifted], dim=1)
-
+        print("after shift:, ", x_padded)
         # token embedding
         # print("before embedding shape: ", x_padded.shape)
         x_embedding = self.embedding(x_padded)
