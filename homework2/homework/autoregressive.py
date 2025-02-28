@@ -83,8 +83,10 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         # Transformer encoder
         transformer_output = self.transformer_encoder(x_embedding, mask=mask)  # (seq_len, batch_size, d_latent)
 
+        print("transformer output shape: ", transformer_output.shape)
         # Linear layer
         logits = self.linear(transformer_output)
+        print("logits shape: ", logits.shape)
         
         # # Softmax for probabilities
         probabilities = F.softmax(self.relu(logits), dim=-1).view(batch_size, height, width, self.n_tokens)
