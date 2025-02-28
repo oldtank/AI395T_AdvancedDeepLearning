@@ -74,7 +74,9 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         x_padded = torch.cat([padding, x_shifted], dim=1)
 
         # token embedding
+        print("before embedding shape: ", x_padded.shape)
         x_embedding = self.embedding(x_padded)
+        print("embedding shape: ", x_embedding.shape)
 
         mask = torch.nn.Transformer.generate_square_subsequent_mask(sequence_length).to(x.device)
         
