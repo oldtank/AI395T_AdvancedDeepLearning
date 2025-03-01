@@ -110,7 +110,7 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
 
         seq_len = h * w
         # x = torch.randint(0, 1024, (B, h, w), dtype=torch.long, device=device)
-        x = next(iter(dataloader))
+        x = next(iter(dataloader)).to(device)
 
         self.eval()  # Set the model to evaluation mode
         with torch.no_grad():
