@@ -104,9 +104,14 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         return probabilities_reshaped, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
+        from .data import TokenDataset
+        dataset = TokenDataset(split="valid", use_local=True)
+        dataloader = torch.utils.data.DataLoader(dataset, batch_size=B, num_workers=4, shuffle=True)
+
         seq_len = h * w
-        x = torch.randint(0, 1024, (B, h, w), dtype=torch.long, device=device)
-        
+        # x = torch.randint(0, 1024, (B, h, w), dtype=torch.long, device=device)
+        x = next(iter(dataloader))
+
         self.eval()  # Set the model to evaluation mode
         with torch.no_grad():
             # for i in range(seq_len):

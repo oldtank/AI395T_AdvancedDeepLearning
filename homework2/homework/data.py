@@ -33,8 +33,11 @@ class ImageDataset:
 
 
 class TokenDataset(torch.utils.data.TensorDataset):
-    def __init__(self, split: str):
-        tensor_path = DATASET_PATH / f"tokenized_{split}.pth"
+    def __init__(self, split: str, use_local: bool = False):
+        if not use_local:
+            tensor_path = DATASET_PATH / f"tokenized_{split}.pth"
+        else:
+            tensor_path = Path(__file__).parent / f"tokenized_{split}.pth"
         if not tensor_path.exists():
             raise FileNotFoundError(
                 f"Tokenized dataset not found at {tensor_path}. Create it following the assignment instructions."
