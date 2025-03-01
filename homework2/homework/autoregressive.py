@@ -105,20 +105,20 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         seq_len = h * w
-        generated_tokens = torch.randint(0, 1024, (B, h, w), dtype=torch.long, device=device)
+        x = torch.randint(0, 1024, (B, h, w), dtype=torch.long, device=device)
         
         self.eval()  # Set the model to evaluation mode
         with torch.no_grad():
-            for i in range(seq_len):
-                row = i // w  # Compute row index
-                col = i % w   # Compute column index
-                
-                logits, _ = self.forward(generated_tokens)
-                probs = F.softmax(logits[:, row, col, :], dim=-1)
-                # print(f"row {row} column {col} probs {probs}")
-                # print(probs[:, 888])
-                next_token = torch.argmax(probs, dim=-1)
-                print(next_token)
-                generated_tokens[:, row, col] = next_token
+            # for i in range(seq_len):
+            #     row = i // w  # Compute row index
+            #     col = i % w   # Compute column index
+            #
+            logits, _ = self.forward(x)
+            probs = F.softmax(logits, dim=-1)
+            # print(f"row {row} column {col} probs {probs}")
+            # print(probs[:, 888])
+            generated = torch.argmax(probs, dim=-1)
+            # print(next_token)
+            # generated_tokens[:, row, col] = next_token
 
-        return generated_tokens
+        return generated
