@@ -91,12 +91,14 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
         def validation_step(self, x, batch_idx):
             with torch.no_grad():
                 x_hat, additional_losses = self.model(x)
+                nll = torch.nn.functional.cross_entropy(x_hat.view(-1, x_hat.shape[-1]), x.view(-1), reduction="mean")
                 loss = (
                     torch.nn.functional.cross_entropy(x_hat.view(-1, x_hat.shape[-1]), x.view(-1), reduction="sum")
                     / math.log(2)
                     / x.shape[0]
                 )
             self.log("validation/loss", loss, prog_bar=True)
+            self.log("validation/nll", nll, prog_bar=True)
             for k, v in additional_losses.items():
                 self.log(f"validation/{k}", v)
             return loss
