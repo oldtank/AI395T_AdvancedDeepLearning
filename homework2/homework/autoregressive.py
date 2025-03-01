@@ -116,8 +116,9 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
                 logits, _ = self.forward(generated_tokens)
                 probs = F.softmax(logits[:, row, col, :], dim=-1)
                 # print(f"row {row} column {col} probs {probs}")
-                # print(probs[0, 888])
+                # print(probs[:, 888])
                 next_token = torch.argmax(probs, dim=-1)
-                # print(next_token)
+                print(next_token)
                 generated_tokens[:, row, col] = next_token
+
         return generated_tokens
