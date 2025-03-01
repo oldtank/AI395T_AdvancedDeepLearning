@@ -76,11 +76,13 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
 
         def training_step(self, x, batch_idx):
             x_hat, additional_losses = self.model(x)
+            nll = torch.nn.functional.cross_entropy(x_hat.view(-1, x_hat.shape[-1]), x.view(-1), reduction="mean")
             loss = (
                 torch.nn.functional.cross_entropy(x_hat.view(-1, x_hat.shape[-1]), x.view(-1), reduction="sum")
                 / math.log(2)
                 / x.shape[0]
             )
+            self.log("train/nll", nll, prog_bar=True)
             self.log("train/loss", loss, prog_bar=True)
             for k, v in additional_losses.items():
                 self.log(f"train/{k}", v)
