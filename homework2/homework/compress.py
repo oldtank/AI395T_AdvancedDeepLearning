@@ -21,7 +21,7 @@ class Compressor:
 
         Use arithmetic coding.
         """
-        raise NotImplementedError()
+        compressed = self.tokenizer.encode_index(x)
 
     def decompress(self, x: bytes) -> torch.Tensor:
         """
