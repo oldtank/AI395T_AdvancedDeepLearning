@@ -17,11 +17,11 @@ class CoTModel(BaseLLM):
             },
             {
                 "role": "user",
-                "content": "What is the equivalence of 1 kilometer in meter?",
+                "content": "What is the measurement of 3 kg when converted into pound?",
             },
             {
                 "role": "assistant",
-                "content": "<answer>1000</answer>"
+                "content": "<answer>6.613answer>"
             },
             {
                 "role": "user",
