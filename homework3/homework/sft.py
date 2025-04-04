@@ -1,6 +1,8 @@
 from .base_llm import BaseLLM
 from .data import Dataset, benchmark
-
+from peft import LoraConfig, TaskType, get_peft_model
+import torch
+from transformers import TrainingArguments, Trainer, DataCollatorWithPadding
 
 def load() -> BaseLLM:
     from pathlib import Path
@@ -49,7 +51,10 @@ def format_example(prompt: str, answer: str) -> dict[str, str]:
     """
     Construct a question / answer pair. Consider rounding the answer to make it easier for the LLM.
     """
-    raise NotImplementedError()
+    return {
+        "question": prompt,
+        "answer": str(round(float(answer)))
+    }
 
 
 class TokenizedDataset:
@@ -78,8 +83,55 @@ def train_model(
     output_dir: str,
     **kwargs,
 ):
-    raise NotImplementedError()
-    test_model(output_dir)
+    basellm = BaseLLM()
+    base_model = basellm.model
+
+    # prepare dataset
+    data = Dataset("train")
+    tokenized_dataset = TokenizedDataset(basellm.tokenizer, data, format_example)
+
+    # get lora model
+    lora_config = LoraConfig(
+        target_modules="all-linear",
+        bias="none",
+        task_type="CAUSAL_LM",
+        r=4,
+        lora_alpha=16
+    )
+    peft_model = get_peft_model(base_model, lora_config)
+
+    if basellm.device == "cuda":
+        peft_model.enable_input_require_grads()
+
+    # define training argument
+    training_args = TrainingArguments(
+        gradient_checkpointing=True,
+        learning_rate=2e-4,
+        output_dir=output_dir,
+        logging_dir=output_dir,
+        report_to="tensorboard",
+        per_device_train_batch_size=32,
+        num_train_epochs=5,
+        logging_steps=50,
+        push_to_hub=False,
+    )
+
+    # data collator
+    data_collator = DataCollatorWithPadding(tokenizer=basellm.tokenizer)
+
+    # instantiate trainer
+    trainer = Trainer(
+        model=peft_model,
+        args=training_args,
+        train_dataset=tokenized_dataset,
+        tokenizer=basellm.tokenizer,
+        data_collator=data_collator,
+    )
+
+    print("start training")
+    train_result = trainer.train()
+
+    # test_model(output_dir)
 
 
 def test_model(ckpt_path: str):
