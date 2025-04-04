@@ -21,7 +21,7 @@ class CoTModel(BaseLLM):
             },
             {
                 "role": "assistant",
-                "content": "<answer>6.613answer>"
+                "content": "<answer>6.613</answer>"
             },
             {
                 "role": "user",
