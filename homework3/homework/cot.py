@@ -25,6 +25,14 @@ class CoTModel(BaseLLM):
             },
             {
                 "role": "user",
+                "content": "How does 6 year measure up in terms of months"
+            },
+            {
+                "role": "assistant",
+                "content": "<answer>72.0</answer>"
+            },
+            {
+                "role": "user",
                 "content": question
             }
         ]
