@@ -141,8 +141,8 @@ class BaseLLM:
         """
         # Convert each question
         prompts = [self.format_prompt(q) for q in questions]
-        generations = self.batched_generate(prompts, num_return_sequences=2, temperature=0.5 )
-        print(generations)
+        generations = self.batched_generate(prompts)
+        # print(generations)
         return [self.parse_answer(g) for g in generations]
 
 
