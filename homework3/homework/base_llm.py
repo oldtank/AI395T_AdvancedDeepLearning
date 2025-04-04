@@ -123,7 +123,7 @@ class BaseLLM:
 
             with torch.no_grad():  # Disable gradient calculation for inference
                 outputs = self.model.generate(
-                    input_ids=inputs['input_ids'],
+                    input_ids=inputs['input_ids'].to(device),
                     attention_mask=inputs['attention_mask'],
                     **generation_config
                 )
