@@ -11,17 +11,17 @@ class CoTModel(BaseLLM):
             {
                 "role": "system",
                 "content": (
-                    "You will be given a task of unit conversion. Be very concise. Give your answer in "
-                    " the format of <answer>{answer}</answer>."
+                    "You will be given a task of unit conversion. Be very concise. Think before you answer"
                 )
             },
             {
                 "role": "user",
-                "content": "What is the measurement of 3 kg when converted into pound?",
+                "content": "Tell me how many kg are there in 6 metric ton.",
             },
             {
                 "role": "assistant",
-                "content": "<answer>6.613</answer>"
+                "content": "There are 1000 kg in 1 metric ton. Therefore there are 1000*6=6000 kg in 6 metric ton. "
+                           "<answer>6000</answer>"
             },
             {
                 "role": "user",
@@ -29,7 +29,8 @@ class CoTModel(BaseLLM):
             },
             {
                 "role": "assistant",
-                "content": "<answer>72.0</answer>"
+                "content": "There are 12 months in 1 year. Therefore there are 12*6=72 months in 6 years. "
+                           "<answer>72.0</answer>"
             },
             {
                 "role": "user",
