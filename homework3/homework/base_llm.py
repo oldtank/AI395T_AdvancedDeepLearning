@@ -109,6 +109,7 @@ class BaseLLM:
             ]
         else:
             inputs = self.tokenizer(prompts, padding=True, return_tensors="pt", return_attention_mask=True)
+            inputs = {k: v.to(device) for k, v in inputs.items()}
             # print(f"Attention mask shape: {inputs['attention_mask'].shape}")
             generation_config = {
                 "max_new_tokens": 50,  # Max tokens to generate per item in the batch
@@ -123,7 +124,7 @@ class BaseLLM:
 
             with torch.no_grad():  # Disable gradient calculation for inference
                 outputs = self.model.generate(
-                    input_ids=inputs['input_ids'].to(device),
+                    input_ids=inputs['input_ids'],
                     attention_mask=inputs['attention_mask'],
                     **generation_config
                 )
