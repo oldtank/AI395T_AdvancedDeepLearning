@@ -42,7 +42,10 @@ class BaseLLM:
         - decode the outputs with self.tokenizer.decode
 
         """
-        return self.batched_generate([prompt])[0]
+        inputs = self.tokenizer.encode(prompt, return_tensors="pt").to(device)
+        outputs = self.model.generate(inputs)
+        return self.tokenizer.decode(outputs[0])
+        # return self.batched_generate([prompt])[0]
 
     @overload
     def batched_generate(
@@ -89,6 +92,7 @@ class BaseLLM:
         Pro Tip: Only batch_decode generated tokens by masking out the inputs with
                  outputs[:, len(inputs["input_ids"][0]) :]
         """
+        self.tokenizer.padding_side = "left"
         from tqdm import tqdm  # Importing tqdm for progress bar
 
         # Preventing OOM
@@ -103,8 +107,32 @@ class BaseLLM:
                 )
                 for r in self.batched_generate(prompts[idx : idx + micro_batch_size], num_return_sequences, temperature)
             ]
+        else:
+            inputs = self.tokenizer(prompts, padding=True, return_tensors="pt", return_attention_mask=True)
+            # print(f"Attention mask shape: {inputs['attention_mask'].shape}")
+            generation_config = {
+                "max_new_tokens": 50,  # Max tokens to generate per item in the batch
+                "do_sample": True if temperature > 0 else False,
+                "eos_token_id": self.tokenizer.eos_token_id,
+                "pad_token_id": self.tokenizer.pad_token_id  # Ensure model knows the pad token ID
+            }
+            if temperature>0:
+                generation_config['temperature']=temperature
+            if num_return_sequences and num_return_sequences>1:
+                generation_config['num_return_sequences'] = num_return_sequences
 
-        raise NotImplementedError()
+            with torch.no_grad():  # Disable gradient calculation for inference
+                outputs = self.model.generate(
+                    input_ids=inputs['input_ids'],
+                    attention_mask=inputs['attention_mask'],
+                    **generation_config
+                )
+                decoded_outputs = self.tokenizer.batch_decode(outputs[:, len(inputs["input_ids"][0]) :], skip_special_tokens=True)
+                print("Batch generation finished.")
+                # print(f"Output tensor shape: {decoded_outputs.shape}")  # Shape will be [batch_size, total_sequence_length]
+                # return de
+            return decoded_outputs
+
 
     def answer(self, *questions) -> list[float]:
         """
@@ -112,7 +140,8 @@ class BaseLLM:
         """
         # Convert each question
         prompts = [self.format_prompt(q) for q in questions]
-        generations = self.batched_generate(prompts)
+        generations = self.batched_generate(prompts, num_return_sequences=2, temperature=0.5 )
+        print(generations)
         return [self.parse_answer(g) for g in generations]
 
 
@@ -122,11 +151,11 @@ def test_model():
     # In my case it talks about cats eating cats, and dogs being happy.
     testset = ["The cat went up", "The dog went down"]
     model = BaseLLM()
-    for t in testset:
-        print("testing generate function")
-        print("input", t)
-        answer = model.generate(t)
-        print("output", answer)
+    # for t in testset:
+    #     print("testing generate function")
+    #     print("input:", t)
+    #     answer = model.generate(t)
+    #     print("output:", answer)
     answers = model.batched_generate(testset)
     print(answers)
 
