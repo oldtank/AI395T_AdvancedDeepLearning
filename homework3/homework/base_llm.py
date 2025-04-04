@@ -112,7 +112,7 @@ class BaseLLM:
             inputs = {k: v.to(device) for k, v in inputs.items()}
             # print(f"Attention mask shape: {inputs['attention_mask'].shape}")
             generation_config = {
-                "max_new_tokens": 50,  # Max tokens to generate per item in the batch
+                "max_new_tokens": 100,  # Max tokens to generate per item in the batch
                 "do_sample": True if temperature > 0 else False,
                 "eos_token_id": self.tokenizer.eos_token_id,
                 "pad_token_id": self.tokenizer.pad_token_id  # Ensure model knows the pad token ID
