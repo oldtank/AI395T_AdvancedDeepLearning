@@ -17,7 +17,7 @@ class CoTModel(BaseLLM):
             },
             {
                 "role": "user",
-                "content": "What is the equivalence of 1 km in m?",
+                "content": "What is the equivalence of 1 kilometer in meter?",
             },
             {
                 "role": "assistant",
