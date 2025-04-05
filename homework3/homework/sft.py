@@ -111,9 +111,10 @@ def train_model(
         logging_dir=output_dir,
         report_to="tensorboard",
         per_device_train_batch_size=32,
-        num_train_epochs=5,
+        num_train_epochs=7,
         logging_steps=50,
         push_to_hub=False,
+        load_best_model_at_end=True,
     )
 
     # data collator
@@ -129,9 +130,11 @@ def train_model(
     )
 
     print("start training")
-    train_result = trainer.train()
+    trainer.train()
 
-    # test_model(output_dir)
+    trainer.save_model("./sft_model")
+
+    test_model("./sft_model")
 
 
 def test_model(ckpt_path: str):
