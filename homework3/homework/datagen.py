@@ -10,7 +10,7 @@ def generate_dataset(output_json: str, oversample: int = 10, temperature: float 
 
     prompts = [model.format_prompt(q) for q in questions]
     generations = model.batched_generate(prompts, num_return_sequences=oversample, temperature=temperature)
-    raise NotImplementedError()
+    print(generations)
 
 
 if __name__ == "__main__":
