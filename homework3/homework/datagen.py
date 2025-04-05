@@ -22,7 +22,7 @@ def generate_dataset(output_json: str, oversample: int = 10, temperature: float 
     generations = model.batched_generate(prompts, num_return_sequences=oversample, temperature=temperature)
 
     to_write = []
-    print(generations)
+    # print(generations)
     for i in range(len(questions)):
         for j in range(oversample):
             generation = generations[i][j]
@@ -34,7 +34,7 @@ def generate_dataset(output_json: str, oversample: int = 10, temperature: float 
             if is_answer_valid(generated_answer, groundtruth):
                 to_write.append([questions[i], generated_answer, generation])
                 break
-    print(len(to_write))
+    print(f"number of records to write f{len(to_write)}")
 
     try:
         with open(output_json, 'w', encoding='utf-8') as json_file:
