@@ -106,7 +106,7 @@ def train_model(
     # define training argument
     training_args = TrainingArguments(
         gradient_checkpointing=True,
-        learning_rate=1e-3,
+        learning_rate=2e-3,
         output_dir=output_dir,
         logging_dir=output_dir,
         report_to="tensorboard",
