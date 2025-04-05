@@ -114,7 +114,6 @@ def train_model(
         num_train_epochs=7,
         logging_steps=50,
         push_to_hub=False,
-        load_best_model_at_end=True,
     )
 
     # data collator
