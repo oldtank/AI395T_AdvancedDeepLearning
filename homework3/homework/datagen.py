@@ -1,19 +1,21 @@
 from .cot import CoTModel
 import torch
 from .data import Dataset, is_answer_valid
+import json
+import os
 
 checkpoint = "HuggingFaceTB/SmolLM2-360M-Instruct"
 device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 def generate_dataset(output_json: str, oversample: int = 10, temperature: float = 0.6):
     # questions = [["Can you change 2 hour to its equivalent in min?", 120.0], ["Express 4 centuries as a quantity of week.", 20870.982787499997]]
-    questions = ["Can you change 2 hour to its equivalent in min?","Express 4 centuries as a quantity of week." ]
+    # questions = ["Can you change 2 hour to its equivalent in min?","Express 4 centuries as a quantity of week." ]
     model = CoTModel(checkpoint=checkpoint)
 
     train_raw = Dataset("train")
     num_records = len(train_raw)
 
     idx = range(num_records)
-    # questions = [train_raw[i][0] for i in idx]
+    questions = [train_raw[i][0] for i in idx]
     print(f"number of question: {len(questions)}")
 
     prompts = [model.format_prompt(q) for q in questions]
@@ -32,10 +34,13 @@ def generate_dataset(output_json: str, oversample: int = 10, temperature: float 
             if is_answer_valid(generated_answer, groundtruth):
                 to_write.append([questions[i], generated_answer, generation])
                 break
-    print(to_write)
+    print(len(to_write))
 
-
-
+    try:
+        with open(output_json, 'w', encoding='utf-8') as json_file:
+            json.dump(to_write, json_file)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 
 if __name__ == "__main__":
