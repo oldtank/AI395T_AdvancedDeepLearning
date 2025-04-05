@@ -19,14 +19,18 @@ def generate_dataset(output_json: str, oversample: int = 10, temperature: float 
     prompts = [model.format_prompt(q) for q in questions]
     generations = model.batched_generate(prompts, num_return_sequences=oversample, temperature=temperature)
 
+    print(generations)
     for i in range(len(questions)):
         for j in range(oversample):
             generation = generations[i][j]
             generated_answer = model.parse_answer(generation)
             groundtruth = train_raw[i][1]
-            print(f"generation: {generation}")
-            print(f"generated answer: {generated_answer}; groundtruth: {groundtruth}")
-            print("========")
+            # print(f"generation: {generation}")
+            # print(f"generated answer: {generated_answer}; groundtruth: {groundtruth}")
+            # print("========")
+            # if is_answer_valid(generated_answer, groundtruth):
+
+
 
 
 if __name__ == "__main__":
