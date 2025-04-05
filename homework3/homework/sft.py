@@ -1,7 +1,6 @@
 from .base_llm import BaseLLM
 from .data import Dataset, benchmark
 from peft import LoraConfig, TaskType, get_peft_model
-import torch
 from transformers import TrainingArguments, Trainer, DataCollatorWithPadding
 
 def load() -> BaseLLM:
