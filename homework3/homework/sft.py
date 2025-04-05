@@ -53,7 +53,7 @@ def format_example(prompt: str, answer: str) -> dict[str, str]:
     """
     return {
         "question": prompt,
-        "answer": str(round(float(answer)))
+        "answer": "<answer>" + str(round(float(answer))) + "</answer>"
     }
 
 
