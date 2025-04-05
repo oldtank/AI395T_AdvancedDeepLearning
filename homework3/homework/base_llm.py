@@ -132,6 +132,8 @@ class BaseLLM:
                 print("Batch generation finished.")
                 # print(f"Output tensor shape: {decoded_outputs.shape}")  # Shape will be [batch_size, total_sequence_length]
                 # return de
+            if num_return_sequences is not None:
+                return [decoded_outputs[i*num_return_sequences: (i+1)*num_return_sequences] for i in range(len(prompts))]
             return decoded_outputs
 
 
