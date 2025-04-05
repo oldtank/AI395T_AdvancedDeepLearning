@@ -30,7 +30,7 @@ def generate_dataset(output_json: str, oversample: int = 10, temperature: float 
             # print(f"generated answer: {generated_answer}; groundtruth: {groundtruth}")
             # print("========")
             if is_answer_valid(generated_answer, groundtruth):
-                to_write.append([questions[i], generated_answer])
+                to_write.append([questions[i], generated_answer, generation])
                 break
     print(to_write)
 
