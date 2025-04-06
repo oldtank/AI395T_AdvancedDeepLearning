@@ -82,6 +82,7 @@ def train_model(
     trainer.train()
 
     trainer.save_model("./homework/rft_model")
+    trainer.save_model("./rft_model")
 
     test_model("./homework/rft_model")
 

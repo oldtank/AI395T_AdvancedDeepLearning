@@ -131,6 +131,7 @@ def train_model(
     trainer.train()
 
     trainer.save_model("./homework/sft_model")
+    trainer.save_model("./sft_model")
 
     test_model("./homework/sft_model")
 
