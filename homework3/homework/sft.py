@@ -130,9 +130,9 @@ def train_model(
     print("start training")
     trainer.train()
 
-    trainer.save_model("./sft_model")
+    trainer.save_model("./homework/sft_model")
 
-    test_model("./sft_model")
+    test_model("./homework/sft_model")
 
 
 def test_model(ckpt_path: str):

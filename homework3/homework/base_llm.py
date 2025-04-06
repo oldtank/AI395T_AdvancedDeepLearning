@@ -154,11 +154,11 @@ def test_model():
     # In my case it talks about cats eating cats, and dogs being happy.
     testset = ["The cat went up", "The dog went down"]
     model = BaseLLM()
-    # for t in testset:
-    #     print("testing generate function")
-    #     print("input:", t)
-    #     answer = model.generate(t)
-    #     print("output:", answer)
+    for t in testset:
+        print("testing generate function")
+        print("input:", t)
+        answer = model.generate(t)
+        print("output:", answer)
     answers = model.batched_generate(testset)
     print(answers)
 

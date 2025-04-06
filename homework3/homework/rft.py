@@ -81,9 +81,9 @@ def train_model(
     print("start training")
     trainer.train()
 
-    trainer.save_model("./rft_model")
+    trainer.save_model("./homework/rft_model")
 
-    test_model("./rft_model")
+    test_model("./homework/rft_model")
 
 if __name__ == "__main__":
     from fire import Fire
