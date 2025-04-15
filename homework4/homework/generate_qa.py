@@ -225,7 +225,7 @@ def check_qa_pairs(info_file: str, view_index: int):
     plt.axis("off")
     plt.title(f"Frame {extract_frame_info(str(image_file))[0]}, View {view_index}")
     # plt.show()
-    plt_path = Path(f"plots/{str(image_file)}")
+    plt_path = Path(f"plots/{base_name}_{view_index:02d}_im.jpg")
     plt.savefig(plt_path)
 
     # Generate QA pairs
