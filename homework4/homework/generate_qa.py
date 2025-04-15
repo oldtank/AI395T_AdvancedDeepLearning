@@ -224,7 +224,9 @@ def check_qa_pairs(info_file: str, view_index: int):
     plt.imshow(annotated_image)
     plt.axis("off")
     plt.title(f"Frame {extract_frame_info(str(image_file))[0]}, View {view_index}")
-    plt.show()
+    # plt.show()
+    plt_path = Path(f"plots/{str(image_file)}")
+    plt.savefig(plt_path)
 
     # Generate QA pairs
     qa_pairs = generate_qa_pairs(info_file, view_index)
