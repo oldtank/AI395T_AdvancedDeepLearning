@@ -126,7 +126,9 @@ def draw_detections(
 
         # Draw bounding box using PIL
         draw.rectangle([(x1_scaled, y1_scaled), (x2_scaled, y2_scaled)], outline=color, width=thickness)
+        draw.point(((x1_scaled+x2_scaled)/2, (y1_scaled+y2_scaled)/2), fill="yellow")
 
+    draw.point((img_width/2, img_height/2), fill="yellow")
     # Convert PIL image to numpy array for matplotlib
     return np.array(pil_image)
 
