@@ -199,10 +199,10 @@ def extract_kart_objects(
             center_dist = curr_center_dist
             center_index = curr_index
 
-        karts.append((track_id, kart_name, center_x, center_y, False))
+        karts.append({"track_id": track_id, "kart_name": kart_name, "center_x": center_x, "center_y": center_y, "is_center": False})
         curr_index += 1
 
-    karts[center_index][4] = True
+    karts[center_index]["is_center"] = True
     return karts
 
 def extract_track_info(info_path: str) -> str:
