@@ -169,7 +169,8 @@ def extract_kart_objects(
     image_center_y = int(img_height/2)
 
     detections = info["detections"][view_index]
-    for index, detection in enumerate(detections):
+    curr_index = 0
+    for detection in detections:
         class_id, track_id, x1, y1, x2, y2 = detection
         class_id = int(class_id)
         track_id = int(track_id)
@@ -196,9 +197,10 @@ def extract_kart_objects(
         curr_center_dist = ((center_x - image_center_x)**2 + (center_y - image_center_y)**2)**0.5
         if curr_center_dist < center_dist:
             center_dist = curr_center_dist
-            center_index = index
+            center_index = curr_index
 
         karts.append((track_id, kart_name, center_x, center_y, False))
+        curr_index += 1
 
     karts[center_index][4] = True
     return karts
