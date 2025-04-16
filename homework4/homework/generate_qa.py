@@ -282,7 +282,7 @@ def check_qa_pairs(info_file: str, view_index: int):
     image_file = list(info_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
 
     # Visualize detections
-    annotated_image = draw_detections(str(image_file), info_file)
+    annotated_image = draw_detections(str(image_file), info_file, min_box_size=3)
 
     # Display the image
     plt.figure(figsize=(12, 8))
