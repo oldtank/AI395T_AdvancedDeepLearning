@@ -132,7 +132,7 @@ def draw_detections(
 
 
 def extract_kart_objects(
-    info_path: str, view_index: int, img_width: int = 100, img_height: int = 150, min_box_size: int = 5
+    info_path: str, view_index: int, img_width: int = 150, img_height: int = 100, min_box_size: int = 5
 ) -> list:
     """
     Extract kart objects from the info.json file, including their center points and identify the center kart.
@@ -168,7 +168,7 @@ def extract_track_info(info_path: str) -> str:
     raise NotImplementedError("Not implemented")
 
 
-def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 100, img_height: int = 150) -> list:
+def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img_height: int = 100) -> list:
     """
     Generate question-answer pairs for a given view.
 
@@ -227,7 +227,7 @@ def check_qa_pairs(info_file: str, view_index: int):
     # plt.show()
     plt_path = Path(f"plots/{base_name}_{view_index:02d}_im.jpg")
     plt.savefig(plt_path)
-
+    
     # Generate QA pairs
     qa_pairs = generate_qa_pairs(info_file, view_index)
 
