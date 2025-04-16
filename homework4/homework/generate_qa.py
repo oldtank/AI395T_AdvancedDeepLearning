@@ -253,6 +253,11 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
         "answer": [kart["kart_name"] for kart in karts if kart["is_center"]][0]
     })
 
+    qa_pairs.append({
+        "question": "How many karts are there in the scenario?",
+        "answer": len(karts)
+    })
+
     track_name = extract_track_info(info_path)
     qa_pairs.append({"question": "What track is this?", "answer": track_name})
 
