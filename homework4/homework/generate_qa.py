@@ -245,11 +245,17 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     # How many karts are in front of the ego car?
     # How many karts are behind the ego car?
 
-    karts = extract_kart_objects(info_path, view_index, img_width, img_height)
-    track_name = extract_track_info(info_path)
-
     qa_pairs = []
+
+    karts = extract_kart_objects(info_path, view_index, img_width, img_height)
+    qa_pairs.append({
+        "question": "What kart is the ego car?",
+        "answer": [kart["kart_name"] for kart in karts if kart["is_center"]][0]
+    })
+
+    track_name = extract_track_info(info_path)
     qa_pairs.append({"question": "What track is this?", "answer": track_name})
+
 
     # for kart in karts:
     #     print(f"detected kart: {kart}")
