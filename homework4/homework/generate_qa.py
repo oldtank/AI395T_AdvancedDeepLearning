@@ -249,11 +249,12 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     track_name = extract_track_info(info_path)
 
     qa_pairs = []
-    qa_pairs.extend({"question": track_name, "answer": track_name})
+    qa_pairs.extend({"question": "What track is this?", "answer": track_name})
 
     # for kart in karts:
     #     print(f"detected kart: {kart}")
     # raise NotImplementedError("Not implemented")
+    return qa_pairs
 
 
 def check_qa_pairs(info_file: str, view_index: int):
