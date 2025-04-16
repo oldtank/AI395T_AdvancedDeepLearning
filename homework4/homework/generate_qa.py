@@ -247,7 +247,7 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
 
     qa_pairs = []
 
-    karts = extract_kart_objects(info_path, view_index, img_width, img_height)
+    karts = extract_kart_objects(info_path, view_index, img_width, img_height, min_box_size=4)
     qa_pairs.append({
         "question": "What kart is the ego car?",
         "answer": [kart["kart_name"] for kart in karts if kart["is_center"]][0]
@@ -282,7 +282,7 @@ def check_qa_pairs(info_file: str, view_index: int):
     image_file = list(info_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
 
     # Visualize detections
-    annotated_image = draw_detections(str(image_file), info_file, min_box_size=3)
+    annotated_image = draw_detections(str(image_file), info_file, min_box_size=4)
 
     # Display the image
     plt.figure(figsize=(12, 8))
