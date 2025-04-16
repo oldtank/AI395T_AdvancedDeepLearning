@@ -289,6 +289,7 @@ def check_qa_pairs(info_file: str, view_index: int):
     print("\nQuestion-Answer Pairs:")
     print("-" * 50)
     for qa in qa_pairs:
+        print(qa)
         print(f"Q: {qa['question']}")
         print(f"A: {qa['answer']}")
         print("-" * 50)
