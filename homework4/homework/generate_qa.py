@@ -169,7 +169,7 @@ def extract_kart_objects(
     image_center_y = int(img_height/2)
 
     detections = info["detections"][view_index]
-    for index, detection in detections:
+    for index, detection in enumerate(detections):
         class_id, track_id, x1, y1, x2, y2 = detection
         class_id = int(class_id)
         track_id = int(track_id)
