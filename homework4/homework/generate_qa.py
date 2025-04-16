@@ -152,21 +152,62 @@ def extract_kart_objects(
         - is_center_kart: Boolean indicating if this is the kart closest to image center
     """
 
-    raise NotImplementedError("Not implemented")
+    # Calculate scaling factors
+    scale_x = img_width / ORIGINAL_WIDTH
+    scale_y = img_height / ORIGINAL_HEIGHT
+
+    # Read the info.json file
+    with open(info_path) as f:
+        info = json.load(f)
+
+    kart_names = info["karts"]
+
+    karts = []
+    center_index = -1
+    center_dist = 9999
+    image_center_x = int(img_width/2)
+    image_center_y = int(img_height/2)
+
+    detections = info["detections"][view_index]
+    for index, detection in detections:
+        class_id, track_id, x1, y1, x2, y2 = detection
+        class_id = int(class_id)
+        track_id = int(track_id)
+        if class_id != 1:
+            continue
+
+        # Scale coordinates to fit the current image size
+        x1_scaled = int(x1 * scale_x)
+        y1_scaled = int(y1 * scale_y)
+        x2_scaled = int(x2 * scale_x)
+        y2_scaled = int(y2 * scale_y)
+
+        # Skip if bounding box is too small
+        if (x2_scaled - x1_scaled) < min_box_size or (y2_scaled - y1_scaled) < min_box_size:
+            continue
+
+        if x2_scaled < 0 or x1_scaled > img_width or y2_scaled < 0 or y1_scaled > img_height:
+            continue
+
+        kart_name = kart_names[track_id]
+
+        center_x = int((x1_scaled+x2_scaled)/2)
+        center_y = int((y1_scaled+y2_scaled)/2)
+        curr_center_dist = ((center_x - image_center_x)**2 + (center_y - image_center_y)**2)**0.5
+        if curr_center_dist < center_dist:
+            center_dist = curr_center_dist
+            center_index = index
+
+        karts.append((track_id, kart_name, center_x, center_y, False))
+
+    karts[center_index][4] = True
+    return karts
 
 def extract_track_info(info_path: str) -> str:
-    """
-    Extract track information from the info.json file.
+    with open(info_path) as f:
+        info = json.load(f)
 
-    Args:
-        info_path: Path to the info.json file
-
-    Returns:
-        Track name as a string
-    """
-
-    raise NotImplementedError("Not implemented")
-
+    return info["track"]
 
 def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img_height: int = 100) -> list:
     """
@@ -200,6 +241,12 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     # How many karts are in front of the ego car?
     # How many karts are behind the ego car?
 
+    karts = extract_kart_objects(info_path, view_index, img_width, img_height)
+    track_name = extract_track_info(info_path)
+    print(f"track name: {track_name}")
+
+    for kart in karts:
+        print(f"detected kart: {kart}")
     raise NotImplementedError("Not implemented")
 
 
@@ -227,7 +274,7 @@ def check_qa_pairs(info_file: str, view_index: int):
     # plt.show()
     plt_path = Path(f"plots/{base_name}_{view_index:02d}_im.jpg")
     plt.savefig(plt_path)
-    
+
     # Generate QA pairs
     qa_pairs = generate_qa_pairs(info_file, view_index)
 
