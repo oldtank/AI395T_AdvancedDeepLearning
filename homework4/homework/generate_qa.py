@@ -134,7 +134,7 @@ def draw_detections(
 
 
 def extract_kart_objects(
-    info_path: str, view_index: int, img_width: int = 150, img_height: int = 100, min_box_size: int = 5
+    info_path: str, view_index: int, img_width: int = 150, img_height: int = 100, min_box_size: int = 3
 ) -> list:
     """
     Extract kart objects from the info.json file, including their center points and identify the center kart.
