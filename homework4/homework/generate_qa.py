@@ -416,11 +416,13 @@ def generate_all(split="train", max_batch=15):
     batch_num = 0
     output_file = f"data/train/{batch_num:03d}_qa_pairs.json"
     curr_info_file_index = 0
+    total_count = 0
     for info_file in info_files:
         if curr_info_file_index == 100:
             try:
                 with open(output_file, 'w', encoding='utf-8') as json_file:
                     json.dump(to_write, json_file)
+                total_count += len(to_write)
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
             curr_info_file_index = 0
@@ -437,10 +439,12 @@ def generate_all(split="train", max_batch=15):
             image_file = list(info_file.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
             if not image_file.is_file():
                 break
-            print(f"generating questions for {info_file} view_index {view_index}")
+            # print(f"generating questions for {info_file} view_index {view_index}")
             to_write.extend(generate_qa_pairs(str(info_file), view_index))
 
         curr_info_file_index += 1
+
+    print(f"total number of data: {total_count}")
 
     # try:
     #     with open(output_file, 'w', encoding='utf-8') as json_file:
