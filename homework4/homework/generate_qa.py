@@ -197,7 +197,7 @@ def extract_kart_objects(
         center_x = int((x1_scaled+x2_scaled)/2)
         center_y = int((y1_scaled+y2_scaled)/2)
         curr_center_dist = ((center_x - image_center_x)**2 + (center_y - image_center_y)**2)**0.5
-        print(f"distance {curr_center_dist}")
+        # print(f"distance {curr_center_dist}")
         if curr_center_dist < center_dist:
             center_dist = curr_center_dist
             center_index = curr_index
@@ -205,8 +205,9 @@ def extract_kart_objects(
         karts.append({"track_id": track_id, "kart_name": kart_name, "center_x": center_x, "center_y": center_y, "is_center": False})
         curr_index += 1
 
-    print(f"center index: {center_index}")
-    karts[center_index]["is_center"] = True
+    if len(karts) > 0:
+        # print(f"center index: {center_index}")
+        karts[center_index]["is_center"] = True
     return karts
 
 def extract_track_info(info_path: str) -> str:
