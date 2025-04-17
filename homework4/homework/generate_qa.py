@@ -252,7 +252,7 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     image_file = list(infofile_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
     image_file = str(image_file)
     print(f"file: {image_file}")
-    image_file = image_file[len("data/")]
+    image_file = image_file[len("data/"):]
     print(f"file: {image_file}")
 
     karts = extract_kart_objects(info_path, view_index, img_width, img_height, min_box_size=3)
