@@ -251,9 +251,7 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     base_name = infofile_path.stem.replace("_info", "")
     image_file = list(infofile_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
     image_file = str(image_file)
-    print(f"file: {image_file}")
     image_file = image_file[len("data/"):]
-    print(f"file: {image_file}")
 
     karts = extract_kart_objects(info_path, view_index, img_width, img_height, min_box_size=3)
     ego_kart = [kart for kart in karts if kart["is_center"]][0]
@@ -289,64 +287,79 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
         if non_ego_position_y[kart_name] == "front":
             qa_pairs.append({
                 "question": f"Is {kart_name} in front of or behind the ego car?",
-                "answer": "front"
+                "answer": "front",
+                "image_file": image_file
             })
             relative += "front and "
         else:
             qa_pairs.append({
                 "question": f"Is {kart_name} in front of or behind the ego car?",
-                "answer": "back"
+                "answer": "back",
+                "image_file": image_file
+
             })
             relative += "back and "
         if non_ego_position_x[kart_name] == "left":
             qa_pairs.append({
                 "question": f"Is {kart_name} to the left or right of the ego car?",
-                "answer": "left"
+                "answer": "left",
+                "image_file": image_file
             })
             relative += "left"
         else:
             qa_pairs.append({
                 "question": f"Is {kart_name} to the left or right of the ego car?",
-                "answer": "right"
+                "answer": "right",
+                "image_file": image_file
             })
             relative += "right"
         qa_pairs.append({
             "question": f"Where is {kart_name} relative to the ego car?",
-            "answer": relative
+            "answer": relative,
+            "image_file": image_file
         })
 
     qa_pairs.append({
         "question": "What kart is the ego car?",
-        "answer": ego_kart["kart_name"]
+        "answer": ego_kart["kart_name"],
+        "image_file": image_file
     })
 
     qa_pairs.append({
         "question": "How many karts are there in the scenario?",
-        "answer": str(len(karts))
+        "answer": str(len(karts)),
+        "image_file": image_file
     })
 
     qa_pairs.append({
         "question": "How many karts are to the left of the ego car?",
-        "answer": str(ego_left)
+        "answer": str(ego_left),
+        "image_file": image_file
     })
 
     qa_pairs.append({
         "question": "How many karts are to the right of the ego car?",
-        "answer": str(ego_right)
+        "answer": str(ego_right),
+        "image_file": image_file
     })
 
     qa_pairs.append({
         "question": "How many karts are in front of the ego car?",
-        "answer": str(ego_front)
+        "answer": str(ego_front),
+        "image_file": image_file
     })
 
     qa_pairs.append({
         "question": "How many karts are behind the ego car?",
-        "answer": str(ego_back)
+        "answer": str(ego_back),
+        "image_file": image_file
     })
 
     track_name = extract_track_info(info_path)
-    qa_pairs.append({"question": "What track is this?", "answer": track_name})
+    qa_pairs.append(
+        {"question": "What track is this?",
+         "answer": track_name,
+         "image_file": image_file})
 
     return qa_pairs
 
@@ -391,7 +404,25 @@ def generate_all(split="train"):
     data_dir = Path(__file__).parent.parent / "data"
     info_files = list(data_dir.glob(f"{split}/*_info.json"))
 
-    # for info_file in info_files:
+    to_write = []
+    output_file = "data/train/000_qa_pairs.json"
+    for info_file in info_files:
+        print(f"current info file: {info_file}")
+        base_name = info_file.stem.replace("_info", "")
+        for view_index in range(10):
+            image_file = list(info_file.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
+            if not image_file.is_file():
+                break
+            print(f"generating questions for {info_file} view_index {view_index}")
+            qa_pairs = generate_qa_pairs(str(info_file), view_index)
+            to_write.extend(qa_pairs)
+        break
+
+    try:
+        with open(output_file, 'w', encoding='utf-8') as json_file:
+            json.dump(to_write, json_file)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 
 """
