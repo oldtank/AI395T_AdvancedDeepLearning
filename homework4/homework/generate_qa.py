@@ -247,6 +247,11 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
 
     qa_pairs = []
 
+    infofile_path = Path(info_path)
+    base_name = infofile_path.stem.replace("_info", "")
+    image_file = list(infofile_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
+    print(f"file: {image_file}")
+
     karts = extract_kart_objects(info_path, view_index, img_width, img_height, min_box_size=3)
     ego_kart = [kart for kart in karts if kart["is_center"]][0]
 
@@ -379,6 +384,12 @@ def check_qa_pairs(info_file: str, view_index: int):
         print(f"A: {qa['answer']}")
         print("-" * 50)
 
+def generate_all(split="train"):
+    data_dir = Path(__file__).parent.parent / "data"
+    info_files = list(data_dir.glob(f"{split}/*_info.json"))
+
+    # for info_file in info_files:
+
 
 """
 Usage Example: Visualize QA pairs for a specific file and view:
@@ -389,7 +400,7 @@ You probably need to add additional commands to Fire below.
 
 
 def main():
-    fire.Fire({"check": check_qa_pairs})
+    fire.Fire({"check": check_qa_pairs, "generate_all": generate_all})
 
 
 if __name__ == "__main__":
