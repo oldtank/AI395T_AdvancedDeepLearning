@@ -248,23 +248,40 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     qa_pairs = []
 
     karts = extract_kart_objects(info_path, view_index, img_width, img_height, min_box_size=3)
+    ego_kart = [kart for kart in karts if kart["is_center"]][0]
+
+    ego_left = 0
+    ego_right = 0
+    non_ego_position = {}
+
+    for kart in karts:
+        if kart["kart_name"] == ego_kart["kart_name"]:
+            continue
+        if kart["center_x"] < ego_kart["center_x"]:
+            ego_left += 1
+            non_ego_position[kart["kart_name"]] = "left"
+        else:
+            ego_right += 1
+            non_ego_position[kart["kart_name"]] = "right"
+
     qa_pairs.append({
         "question": "What kart is the ego car?",
-        "answer": [kart["kart_name"] for kart in karts if kart["is_center"]][0]
+        "answer": ego_kart["kart_name"]
     })
 
     qa_pairs.append({
         "question": "How many karts are there in the scenario?",
         "answer": len(karts)
     })
+    
+    qa_pairs.append({
+        "question": "How many karts are to the left of the ego car?",
+        "answer": ego_left
+    })
 
     track_name = extract_track_info(info_path)
     qa_pairs.append({"question": "What track is this?", "answer": track_name})
 
-
-    # for kart in karts:
-    #     print(f"detected kart: {kart}")
-    # raise NotImplementedError("Not implemented")
     return qa_pairs
 
 
