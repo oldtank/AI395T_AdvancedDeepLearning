@@ -197,7 +197,7 @@ def extract_kart_objects(
         center_x = int((x1_scaled+x2_scaled)/2)
         center_y = int((y1_scaled+y2_scaled)/2)
         curr_center_dist = ((center_x - image_center_x)**2 + (center_y - image_center_y)**2)**0.5
-        print(curr_center_dist)
+        print(f"distance {curr_center_dist}")
         if curr_center_dist < center_dist:
             center_dist = curr_center_dist
             center_index = curr_index
