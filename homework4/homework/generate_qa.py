@@ -398,6 +398,7 @@ def check_qa_pairs(info_file: str, view_index: int):
     for qa in qa_pairs:
         print(f"Q: {qa['question']}")
         print(f"A: {qa['answer']}")
+        print(f"F: {qa['image_file']}")
         print("-" * 50)
 
 def generate_all(split="train"):
