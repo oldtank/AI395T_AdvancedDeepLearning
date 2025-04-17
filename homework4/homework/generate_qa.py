@@ -252,17 +252,26 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
 
     ego_left = 0
     ego_right = 0
-    non_ego_position = {}
+    ego_front = 0
+    ego_back = 0
+    non_ego_position_x = {}
+    non_ego_position_y = {}
 
     for kart in karts:
         if kart["kart_name"] == ego_kart["kart_name"]:
             continue
         if kart["center_x"] < ego_kart["center_x"]:
             ego_left += 1
-            non_ego_position[kart["kart_name"]] = "left"
+            non_ego_position_x[kart["kart_name"]] = "left"
         else:
             ego_right += 1
-            non_ego_position[kart["kart_name"]] = "right"
+            non_ego_position_x[kart["kart_name"]] = "right"
+        if kart["center_y"] < ego_kart["center_y"]:
+            ego_front += 1
+            non_ego_position_y[kart["kart_name"]] = "front"
+        else:
+            ego_back += 1
+            non_ego_position_y[kart["kart_name"]] = "back"
 
     qa_pairs.append({
         "question": "What kart is the ego car?",
@@ -273,10 +282,25 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
         "question": "How many karts are there in the scenario?",
         "answer": len(karts)
     })
-    
+
     qa_pairs.append({
         "question": "How many karts are to the left of the ego car?",
         "answer": ego_left
+    })
+
+    qa_pairs.append({
+        "question": "How many karts are to the right of the ego car?",
+        "answer": ego_right
+    })
+
+    qa_pairs.append({
+        "question": "How many karts are in front of the ego car?",
+        "answer": ego_front
+    })
+
+    qa_pairs.append({
+        "question": "How many karts are behind the ego car?",
+        "answer": ego_back
     })
 
     track_name = extract_track_info(info_path)
