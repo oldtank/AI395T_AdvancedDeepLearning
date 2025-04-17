@@ -250,6 +250,7 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     infofile_path = Path(info_path)
     base_name = infofile_path.stem.replace("_info", "")
     image_file = list(infofile_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
+    image_file = str(image_file)
     image_file = image_file[len("data/")]
     print(f"file: {image_file}")
 
