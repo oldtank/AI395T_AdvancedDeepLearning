@@ -166,7 +166,7 @@ def extract_kart_objects(
 
     karts = []
     center_index = -1
-    center_dist = 9999
+    center_dist = 9999999
     image_center_x = int(img_width/2)
     image_center_y = int(img_height/2)
 
