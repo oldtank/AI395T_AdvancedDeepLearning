@@ -277,26 +277,35 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
         kart_name = kart["kart_name"]
         if kart_name == ego_kart["kart_name"]:
             continue
-        if non_ego_position_x[kart_name] == "left":
-            qa_pairs.append({
-                "question": f"Is {kart_name} to the left or right of the ego car?",
-                "answer": "left"
-            })
-        else:
-            qa_pairs.append({
-                "question": f"Is {kart_name} to the left or right of the ego car?",
-                "answer": "right"
-            })
+        relative = ""
         if non_ego_position_y[kart_name] == "front":
             qa_pairs.append({
                 "question": f"Is {kart_name} in front of or behind the ego car?",
                 "answer": "front"
             })
+            relative += "front and "
         else:
             qa_pairs.append({
                 "question": f"Is {kart_name} in front of or behind the ego car?",
                 "answer": "back"
             })
+            relative += "back and "
+        if non_ego_position_x[kart_name] == "left":
+            qa_pairs.append({
+                "question": f"Is {kart_name} to the left or right of the ego car?",
+                "answer": "left"
+            })
+            relative += "left"
+        else:
+            qa_pairs.append({
+                "question": f"Is {kart_name} to the left or right of the ego car?",
+                "answer": "right"
+            })
+            relative += "right"
+        qa_pairs.append({
+            "question": f"Where is {kart_name} relative to the ego car?",
+            "answer": relative
+        })
 
     qa_pairs.append({
         "question": "What kart is the ego car?",
@@ -305,27 +314,27 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
 
     qa_pairs.append({
         "question": "How many karts are there in the scenario?",
-        "answer": len(karts)
+        "answer": str(len(karts))
     })
 
     qa_pairs.append({
         "question": "How many karts are to the left of the ego car?",
-        "answer": ego_left
+        "answer": str(ego_left)
     })
 
     qa_pairs.append({
         "question": "How many karts are to the right of the ego car?",
-        "answer": ego_right
+        "answer": str(ego_right)
     })
 
     qa_pairs.append({
         "question": "How many karts are in front of the ego car?",
-        "answer": ego_front
+        "answer": str(ego_front)
     })
 
     qa_pairs.append({
         "question": "How many karts are behind the ego car?",
-        "answer": ego_back
+        "answer": str(ego_back)
     })
 
     track_name = extract_track_info(info_path)
