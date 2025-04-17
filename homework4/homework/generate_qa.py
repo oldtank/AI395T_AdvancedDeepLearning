@@ -204,6 +204,7 @@ def extract_kart_objects(
         karts.append({"track_id": track_id, "kart_name": kart_name, "center_x": center_x, "center_y": center_y, "is_center": False})
         curr_index += 1
 
+    print(f"center index: {center_index}")
     karts[center_index]["is_center"] = True
     return karts
 
