@@ -251,7 +251,8 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     base_name = infofile_path.stem.replace("_info", "")
     image_file = list(infofile_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
     image_file = str(image_file)
-    image_file = image_file[len("data/"):]
+    index = image_file.index("data/")
+    image_file = image_file[index + len("data/"):]
 
     karts = extract_kart_objects(info_path, view_index, img_width, img_height, min_box_size=3)
     ego_kart = [kart for kart in karts if kart["is_center"]][0]
