@@ -402,29 +402,45 @@ def check_qa_pairs(info_file: str, view_index: int):
         print(f"F: {qa['image_file']}")
         print("-" * 50)
 
-def generate_all(split="train"):
+def generate_all(split="train", max_batch=15):
     data_dir = Path(__file__).parent.parent / "data"
     info_files = list(data_dir.glob(f"{split}/*_info.json"))
 
     to_write = []
-    output_file = "data/train/000_qa_pairs.json"
+    batch_num = 0
+    output_file = f"data/train/{batch_num:03d}_qa_pairs.json"
+    curr_info_file_index = 0
     for info_file in info_files:
-        print(f"current info file: {info_file}")
+        if curr_info_file_index == 100:
+            try:
+                with open(output_file, 'w', encoding='utf-8') as json_file:
+                    json.dump(to_write, json_file)
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+            curr_info_file_index = 0
+            batch_num += 1
+            output_file = f"data/train/{batch_num:03d}_qa_pairs.json"
+            to_write = []
+
+            if batch_num == max_batch:
+                break
+
+        # print(f"current info file: {info_file}")
         base_name = info_file.stem.replace("_info", "")
         for view_index in range(10):
             image_file = list(info_file.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
             if not image_file.is_file():
                 break
             print(f"generating questions for {info_file} view_index {view_index}")
-            qa_pairs = generate_qa_pairs(str(info_file), view_index)
-            to_write.extend(qa_pairs)
-        break
+            to_write.extend(generate_qa_pairs(str(info_file), view_index))
 
-    try:
-        with open(output_file, 'w', encoding='utf-8') as json_file:
-            json.dump(to_write, json_file)
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        curr_info_file_index += 1
+
+    # try:
+    #     with open(output_file, 'w', encoding='utf-8') as json_file:
+    #         json.dump(to_write, json_file)
+    # except Exception as e:
+    #     print(f"An unexpected error occurred: {e}")
 
 
 """
