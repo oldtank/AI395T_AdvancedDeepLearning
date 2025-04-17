@@ -273,6 +273,31 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
             ego_back += 1
             non_ego_position_y[kart["kart_name"]] = "back"
 
+    for kart in karts:
+        kart_name = kart["kart_name"]
+        if kart_name == ego_kart["kart_name"]:
+            continue
+        if non_ego_position_x[kart_name] == "left":
+            qa_pairs.append({
+                "question": f"Is {kart_name} to the left or right of the ego car?",
+                "answer": "left"
+            })
+        else:
+            qa_pairs.append({
+                "question": f"Is {kart_name} to the left or right of the ego car?",
+                "answer": "right"
+            })
+        if non_ego_position_y[kart_name] == "front":
+            qa_pairs.append({
+                "question": f"Is {kart_name} in front of or behind the ego car?",
+                "answer": "front"
+            })
+        else:
+            qa_pairs.append({
+                "question": f"Is {kart_name} in front of or behind the ego car?",
+                "answer": "back"
+            })
+
     qa_pairs.append({
         "question": "What kart is the ego car?",
         "answer": ego_kart["kart_name"]
